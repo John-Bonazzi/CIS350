@@ -21,9 +21,9 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 |------|-----|-----|-----|
 | Checkers | Two Players | [Cole Sellers](https://github.com/Csellers15) | None |
 | Memory | Two Players | [Gionata Bonazzi](https://github.com/GionataB) | None |
-| Sudoku | Single Player | Juan Tafarello Fidalgo | None |
+| Sudoku | Single Player | [Juan Tafarello Fidalgo](https://github.com/juantafarello) | None |
 | Minesweeper | Single Player | [Rosa Fleming](https://github.com/rosafleming) | None |
-| Interface | None | Brendan Cronan | None |
+| Interface | None | [Brendan Cronan](https://github.com/brendan-cronan) | None |
 
 ### Workflow:
 
