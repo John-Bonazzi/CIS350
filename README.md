@@ -35,3 +35,8 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 | Comments | 3/5 - 3/12 | Finish writing Javadoc comments for all your classes. Make sure they follow the GVSU [Java Coding Style](http://www.cis.gvsu.edu/java-coding-style-guide/)|
 | Expand | 3/12 - TBD | Implement new ideas and QoL changes to the program. Example: make it fancier, faster, more options, difficulty level etc... |
 | Web App | TBD - TBD | Embed the Java code in a website |
+
+### Communication
+
+To easily share code, ideas and links, we will make use of a [slack channel](
+https://join.slack.com/t/350-project/shared_invite/enQtMzE0MjU4ODQ2NDU0LWMxZjZjNmEwMTY4MTgxMWZhZDA1OWNmODM1YWY2OWE0ODRkZGRmZDIzYTc0YjMzYTczOTBlMDg4MzE4ZGY3ZTQ).
