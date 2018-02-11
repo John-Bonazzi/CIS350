@@ -21,9 +21,9 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 |------|-----|-----|-----|
 | Checkers | Two Players | [Cole Sellers](https://github.com/Csellers15) | None |
 | Memory | Two Players | [Gionata Bonazzi](https://github.com/GionataB) | None |
-| Sudoku | Single Player | Juan Tafarello Fidalgo | None |
+| Sudoku | Single Player | [Juan Tafarello Fidalgo](https://github.com/juantafarello) | None |
 | Minesweeper | Single Player | [Rosa Fleming](https://github.com/rosafleming) | None |
-| Interface | None | Brendan Cronan | None |
+| Interface | None | [Brendan Cronan](https://github.com/brendan-cronan) | None |
 
 ### Workflow:
 
@@ -36,6 +36,7 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 | Expand | 3/12 - TBD | Implement new ideas and QoL changes to the program. Example: make it fancier, faster, more options, difficulty level etc... |
 | Web App | TBD - TBD | Embed the Java code in a website |
 
+### Communication
 
-Slack Link:
-https://join.slack.com/t/350-project/shared_invite/enQtMzE0MjU4ODQ2NDU0LWMxZjZjNmEwMTY4MTgxMWZhZDA1OWNmODM1YWY2OWE0ODRkZGRmZDIzYTc0YjMzYTczOTBlMDg4MzE4ZGY3ZTQ
+To easily share code, ideas and links, we will make use of a [slack channel](
+https://join.slack.com/t/350-project/shared_invite/enQtMzE0MjU4ODQ2NDU0LWMxZjZjNmEwMTY4MTgxMWZhZDA1OWNmODM1YWY2OWE0ODRkZGRmZDIzYTc0YjMzYTczOTBlMDg4MzE4ZGY3ZTQ).
