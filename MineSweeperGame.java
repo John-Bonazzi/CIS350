@@ -8,8 +8,8 @@ import java.util.Random;
  * A class to handle all of the basic functions of the classic
  * game "MineSweeper". Allows the player to adjust the difficulty by 
  * changing the number of mines and the size of the board
- * @author Pieter Holleman
- *@version February 22 2016
+ * @author Rosa Fleming
+ *@version February 14, 2018
  */
 public class MineSweeperGame {
 

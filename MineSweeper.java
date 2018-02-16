@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 /**************************************************
  * A driver class to instantiate and begin a game of 
  * MineSweeper
- * @author Pieter Holleman * @version February 22 2016
+ * @author Rosa Fleming * @version February 14,2018
  */
 
 public class MineSweeper {
