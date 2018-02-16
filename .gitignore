@@ -1,3 +1,6 @@
 .DS_Store
 .project
 runcmds.txt
+*.class
+.settings
+.classpath
