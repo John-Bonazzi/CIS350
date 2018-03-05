@@ -1,4 +1,4 @@
-import gui;
+package gui;
 public class GameHub{
 
 
