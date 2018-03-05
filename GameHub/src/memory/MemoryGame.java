@@ -14,8 +14,6 @@ public class MemoryGame {
 
 	private ArrayList<Tile> tiles = new ArrayList<Tile>();
 
-	private ArrayList<Integer> score;
-
 	private int numPlayers = 1;
 
 	private int player = -1;
