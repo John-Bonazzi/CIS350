@@ -26,4 +26,7 @@ public abstract class Game {
 		this.playerTurn = 0;
 	}
 
+	public void addPlayer(Player p, int turn) {
+		players.add(turn, p);
+	}
 }
