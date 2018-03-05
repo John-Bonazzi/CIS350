@@ -1,4 +1,4 @@
-package engine;
+package gui;
 import javax.swing.*;
 public abstract class GamePanel extends JPanel{
 
