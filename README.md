@@ -2,7 +2,7 @@
 
 ### Description:
 
-The project is about a suite of board games: the similarity between the games is that they are all played in some king of grid board.
+The project is about a suite of board games: the similarity between the games is that they are all played in some kind of grid board.
 
 ### Games:
 
@@ -27,15 +27,27 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 
 ### Workflow:
 
-| | Week(s) | Description |
-|-----|---------|-------------|
-| Interface | 2/5 - 2/12 | Declare the methods you think you'll need on a Java Interface file and provide Javadoc comments |
-| Project Design | 2/12 - 2/19 | Done in group. We should look at the interfaces and see if we can merge similar methods to prevent repeating code |
-| Implementation | 2/19 - 3/5 | Write the Java classes for your code. Your code should compile without errors by 3/5. This will be the code of our first release |
-| Comments | 3/5 - 3/12 | Finish writing Javadoc comments for all your classes. Make sure they follow the GVSU [Java Coding Style](http://www.cis.gvsu.edu/java-coding-style-guide/)|
-| Expand | 3/12 - TBD | Implement new ideas and QoL changes to the program. Example: make it fancier, faster, more options, difficulty level etc... |
-| Web App | TBD - TBD | Embed the Java code in a website |
+| | Week(s) | Description | Completed On |
+|-----|---------|-------------|--------- |
+| Interface | 2/5 - 2/12 | Declare the methods you think you'll need on a Java Interface file and provide Javadoc comments | 2/12 (Juan's and Rosa's part missing)|
+| Project Design | 2/12 - 2/19 | We should look at the interfaces and see if we can merge similar methods to prevent repeating code | - |
+| Implementation | 2/19 - 3/5 | Write the Java classes for your code. Your code should compile without errors by 3/5. This will be the code of our first release | - |
+| Comments | 3/5 - 3/9 | Finish writing Javadoc comments for all your classes. Make sure they follow the GVSU [Java Coding Style](http://www.cis.gvsu.edu/java-coding-style-guide/)| - |
+| Testing | 3/9 - TBD | Test the code using JUnit classes| - |
+| Expand | TBD - TBD | Implement new ideas and QoL changes to the program. Example: make it fancier, faster, more options, difficulty level etc... | - |
+| Web App | TBD - TBD | Embed the Java code in a website | - |
 
+### Project EVA
+
+| Task | Est. | Actual |
+|------|------|------|
+| Interface | 7 | - |
+| Project Design | 7 | - |
+| Implementation | 7 | - |
+| Comments | 5 | - |
+| Testing | - | - |
+| Expand | - | - |
+| Web App | - | - |
 ### Communication
 
 To easily share code, ideas and links, we will make use of a [slack channel](
