@@ -1,4 +1,4 @@
-package project3;
+package minesweeper;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

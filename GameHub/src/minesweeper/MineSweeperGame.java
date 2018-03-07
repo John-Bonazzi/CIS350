@@ -1,4 +1,4 @@
-package project3;
+package minesweeper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
