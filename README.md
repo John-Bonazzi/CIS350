@@ -2,7 +2,7 @@
 
 ### Description:
 
-The project is about a suite of board games: the similarity between the games is that they are all played in some king of grid board.
+The project is about a suite of board games: the similarity between the games is that they are all played in some kind of grid board.
 
 ### Games:
 
