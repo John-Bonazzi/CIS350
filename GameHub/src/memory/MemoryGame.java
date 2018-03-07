@@ -2,89 +2,56 @@ package memory;
 
 import java.util.ArrayList;
 import java.util.Random;
+import game_utilities.*;
+import exceptions.*;
 
 
-//FIXME: make a player class that can be used by everyone (has a name, a score etc...)
-//FIXME: make a game class that can be used by everyone (contains the game board, the number of players, knows the turn, who is playing etc...)
 //FIXME: make a file utilities class that contains some of the method to save information
 //about general data like player's data, game's data.
 
 
-public class MemoryGame {
+public class MemoryGame extends Game{
 
 	private ArrayList<Tile> tiles = new ArrayList<Tile>();
-
-	private int numPlayers = 1;
-
-	private int player = -1;
-
-	/*****************************************************************************
-	 * Default construct for the Memory class.
-	 *
-	 * @param num_pictures
-	 *            tells the program how many pictures to use. This is the number of
-	 *            unique elements in the game, paired tiles count as one.
-	 *****************************************************************************/
-	public MemoryGame(int num_pictures, int players) {
-		new MemoryGame(num_pictures, players, 10);
-	}
 	
-	public MemoryGame(int num_pictures, int players, int initialScore) {
-		if (players > 1)
-			this.numPlayers = players;
-		for (int i = 0; i < numPlayers; i++)
-			score.add(initialScore);
+	public MemoryGame(int num_pictures, int players, int initialScore) throws NotEnoughPicturesException {
+		super(players, initialScore);
 		Picture[] p = Picture.values();
+		if(num_pictures > p.length) throw new NotEnoughPicturesException(p.length, num_pictures);
 		for (int i = 0; i < num_pictures; i++) {
-			Tile t = new Tile(p[i], Visibility.HIDDEN);
-			tiles.add(t);
+			tiles.add(new Tile(p[i], Visibility.HIDDEN));
 		}
-		setPositions(tiles);
+		setPositions(this.tiles);
 	}
 
-	public int getScore(int player) {
-		return score.get(player);
-	}
-	
-	public int nextPlayer() {
-		if(hasLost(this.player))
-			this.player = (this.player + 1) % this.numPlayers;
-		return this.player;
-	}
-
-	
-	
-	public void turn(int firstTile, int secondTile, int player) {
-		int newScore;
-		if(selectTiles(tiles.get(firstTile), tiles.get(secondTile)))
-			newScore = score.get(player) + tiles.get(firstTile).positive_points;
+	//NOTE: tiles go from 1 to numTiles, so in the array the index is parameter - 1
+	//NOTE: every tile has a negative value, so when the user select two wrong tiles, the negative values are added together, and the mean is taken as new value. note that this mean is rounded down to an integer.
+	public void gameTurn(int firstTile, int secondTile) {
+		Tile first = tiles.get(firstTile - 1);
+		Tile second = tiles.get(secondTile - 1);
+		boolean positive = selectTiles(first, second);//Find where to add points or subtract them
+		int newScore = 0;
+		if(positive)
+			newScore = first.getPoints(positive); //Get the right amount of points
 		else
-			newScore = score.get(player) + tiles.get(firstTile).negative_points;
-		score.set(player, newScore);
+			newScore = (int) (first.getPoints(positive) + second.getPoints(positive)) / 2; //Takes the mean value, rounded to the lowest integer. example: 5 and 6 -> 5.5, value assigned = 5
+		super.addScore(newScore); //Add those points to the total
 	}
 
-	
-	public boolean hasLost(int player) {
-		return score.get(player) <= 0;
-	}
-
-	public String showScores() {
-		String output = "";
-		for( int i = 0; i < this.numPlayers; i++, output += "\n")
-			output = output + "Player " + (i + 1) + ":\t" + getScore(i);
-		return output;
-	}
-	
 	/*****************************************************************************
-	 * Given a list of tiles, the method assigns a "paired" tile at a random position
-	 *****************************************************************************/	
+	 * Given a list of tiles, the method assigns a "paired" tile at a random position.
+	 * The method copies the tiles in the list, to double the actual list.
+	 * It does this because the game pairs a tile with an exact copy of the object
+	 * in another position (so, same field's values), and this method 
+	 * copies the list doubling it.
+	 *****************************************************************************/
 	private void setPositions(ArrayList<Tile> list) {
 		int size  = list.size();
 		Tile temp;
 		Random rand = new Random();
 		for(int i = 0; i < size; i++)
 			list.add(list.get(i)); //Copy the list and append it to double the tiles.
-		size = list.size();
+		size = list.size(); //get the new size
 		int pos;
 		for(int i = 0; i < size; i++) {
 			pos = i + rand.nextInt(size - i);
@@ -95,6 +62,14 @@ public class MemoryGame {
 	}
 
 	private boolean selectTiles(Tile firstTile, Tile secondTile) {
-		return firstTile.picture == secondTile.picture;
+		if(firstTile.getPicture() == secondTile.getPicture()) {
+			tiles.remove(firstTile);
+			tiles.remove(secondTile);
+			return true;
+		}
+		else {
+			return false;
+		}
+		
 	}
 }

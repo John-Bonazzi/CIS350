@@ -3,29 +3,40 @@ package game_utilities;
 import exceptions.*;
 
 /**
- * This class defines a Player abstract object. Some information are used by
- * every game, like the player's turn, the player's score, the player's name.
- * Other methods, specific to the game, are to be implemented in the inherited
- * class.
- * 
+ * This class defines a Player object.
+ * The Player object is something used by all games, and works the same way.
+ * This object does not change anything in the game, but is used to save statistics
+ * about the player. Which means that this class should not have anything else except setters and getters.
+ * However, one exception is the method hasLost(), which is important to keep on the player-side of the code
+ * so that each Player object is aware if it is still playing or not.
  * @author Gionata Bonazzi
  * @version 15 February 2018
  *
  */
-public abstract class Player {
+public class Player {
+	
 	private int score = 0;
 
 	private int turn;
 
+	private int totalTurns;
+	
 	private String name;
 
-	public Player(String name, int turn) throws NameEmptyException {
-		if (name.isEmpty())
-			throw new NameEmptyException();
-		this.name = name;
+	public Player(int turn, int score){
+		defaultName(turn);
 		this.turn = turn;
+		this.score = score;
+		this.totalTurns = 0;
 	}
 
+	private void defaultName(int turn) {
+		this.name = "Player" + turn;
+	}
+	
+	public void changeName(String name) {
+		this.name = name;
+	}
 	public int getTurn() {
 		return this.turn;
 	}
@@ -46,4 +57,11 @@ public abstract class Player {
 		return this.score <= 0;
 	}
 
+	public void incrementTotalTurns() {
+		this.totalTurns++;
+	}
+	
+	public int getTotalTurns() {
+		return this.totalTurns;
+	}
 }
