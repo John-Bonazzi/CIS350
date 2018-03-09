@@ -5,6 +5,11 @@ import java.util.ArrayList;
 
 public class Checkers extends JPanel {
 
+
+	/***************************************************************************
+	  This is the main class that will create the new jframe as well as set
+	  screensize, and set all visibilities.
+    ***************************************************************************/
    public static void main(String[] args) {
       JFrame window = new JFrame("Checkers");
       Checkers content = new Checkers();
@@ -24,6 +29,11 @@ public class Checkers extends JPanel {
 
    private JLabel message;
 
+   /***************************************************************************
+	  The Checkers constructor, this class will add all the buttons to the
+	  board and set layout to null, it will set the preferred size as well as
+	  create the board, add all the buttons, and set bounds for the game.
+    ***************************************************************************/
    public Checkers() {
       setLayout(null);
       setPreferredSize(new Dimension(350,250));
@@ -44,10 +54,16 @@ public class Checkers extends JPanel {
 
 
    // --------------------  Nested Classes ------------------------------- //
+
+
    private static class CheckersMove {
       int fromRow, fromCol;
       int toRow, toCol;
 
+  	/***************************************************************************
+	  Checkers move class will set all of the instance variables for rows and
+	  and columns
+    ***************************************************************************/
       CheckersMove(int r1, int c1, int r2, int c2) {
          fromRow = r1;
          fromCol = c1;
@@ -55,6 +71,10 @@ public class Checkers extends JPanel {
          toCol = c2;
       }
 
+      /***************************************************************************
+      tests whether a move is a jump. it is assumed the move is legal. in a jump
+      the piece moves 2 rows.
+      ***************************************************************************/
       boolean isJump() {
          return (fromRow - toRow == 2 || fromRow - toRow == -2);
       }
@@ -67,6 +87,11 @@ public class Checkers extends JPanel {
       int selectedRow, selectedCol;
       CheckersMove[] legalMoves;
 
+      /***************************************************************************
+      This class is the main class that sets up the board, it creates the listeners
+      as well as sets the buttons and the messages, at the very en of this class
+      it will call a new game which will start the new game.
+      ***************************************************************************/
       Board() {
          setBackground(Color.BLACK);
          addMouseListener(this);
@@ -82,6 +107,9 @@ public class Checkers extends JPanel {
          doNewGame();
       }
 
+      /***************************************************************************
+      This is simply the action listeners for the new game and resign buttons
+      ***************************************************************************/
       public void actionPerformed(ActionEvent evt) {
          Object src = evt.getSource();
          if (src == newGameButton)
@@ -90,6 +118,13 @@ public class Checkers extends JPanel {
             doResign();
       }
 
+      /***************************************************************************
+      Begins a new game, sets up the pieces on the board. sets the current player
+      to red, gets reds legal moves, sets selected row to -1 because red hasnt
+      selected a piece yet. displays message telling red it is their move.
+      sets gameInProgress to true, disables new game button, enables resign button
+      and repaints the board.
+      ***************************************************************************/
       void doNewGame() {
          if (gameInProgress == true) {
             message.setText("You must finish the current game");
@@ -107,6 +142,12 @@ public class Checkers extends JPanel {
          repaint();
       }
 
+      /***************************************************************************
+      the current player whose turn it is loses and opponent win, checks if there
+      is a current game in progress, if not it sends a message saying so, it
+      then checks the current player and calls the game over class saying who
+      wins.
+      ***************************************************************************/
       void doResign() {
          if (gameInProgress == false) {
             message.setText("Sorry, there is no game in progress");
@@ -118,6 +159,10 @@ public class Checkers extends JPanel {
             gameOver("BLACK resigns.  RED wins.");
       }
 
+      /***************************************************************************
+      sets the text of the message to the winner, enables the new game button
+      and disables the resign button, also sets gameInProgress to false.
+      ***************************************************************************/
       void gameOver(String str) {
          message.setText(str);
          newGameButton.setEnabled(true);
@@ -125,6 +170,16 @@ public class Checkers extends JPanel {
          gameInProgress = false;
       }
 
+      /***************************************************************************
+      This method is called by the mousePressed() method when a player has clicked
+      on a square. If the player has clicked on a square and it is legal it will
+      return the row and column as the selected. this method also checks that
+      there was in fact a piece selected and shows a error message if there is
+      no piece selected. if the player clciked a square that that the piece
+      selected can be leaglly moved, it makes the move then returns. also add a
+      statement for when the piece has been slected but the player clicked
+      on a sqaure that is not legally able to move to.
+      ***************************************************************************/
       void doClickSquare(int row, int col) {
          for (int i = 0; i < legalMoves.length; i++)
             if (legalMoves[i].fromRow == row && legalMoves[i].fromCol == col) {
@@ -154,6 +209,16 @@ public class Checkers extends JPanel {
 
       }
 
+      /***************************************************************************
+      if a move was made its possible there is another move i.e. double jump.
+      this method checks for legal moves at the square the player just jumped
+      too if there is one the player must jump. the next step is that the players
+      turn has ended so it changes to the other player and gets that players
+      legal moves. if there are no legal moves for the player the game will end.
+      sets the selected row to -1 to show that the player has yet to choose a
+      piece to move. also added a method that automatically chooses a piece if
+      all legal moves use the same piece. this method then re-paints the board.
+      ***************************************************************************/
       void doMakeMove(CheckersMove move) {
 
          board.makeMove(move);
@@ -211,6 +276,10 @@ public class Checkers extends JPanel {
          repaint();
       }
 
+      /***************************************************************************
+      this will draw the checkerboard pattern, it will also draw the checkers.
+      if the game is in progress it will also highlight the legal moves.
+      ***************************************************************************/
       public void paintComponent(Graphics g) {
          g.setColor(Color.black);
          g.drawRect(0,0,getSize().width-1,getSize().height-1);
@@ -270,6 +339,11 @@ public class Checkers extends JPanel {
 
       }
 
+      /***************************************************************************
+      Responds to the users click on the board, if there isnt a game in progress
+      it will show an error message. If there is a game in progress it will
+      get the selected row and column and call the doClickSquare() method.
+      ***************************************************************************/
       public void mousePressed(MouseEvent evt) {
          if (gameInProgress == false)
             message.setText("Click \"New Game\" to start a new game.");
@@ -307,6 +381,9 @@ public class Checkers extends JPanel {
          setUpGame();
       }
 
+      /***************************************************************************
+      Constructor, Creates the board and sets it up for a new game.
+      ***************************************************************************/
       void setUpGame() {
          for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -330,6 +407,13 @@ public class Checkers extends JPanel {
          return board[row][col];
       }
 
+      /***************************************************************************
+      This method will get all of the legal moves a player can make, it will first
+      check if the player is not red or black, shouldn't be possible but checking it
+      anyways, it will then see if the player is a king,  it will then create a
+      arraylist of the total moves possible and then check if the jumps are
+      possible. AT the end it will return an array of all the possible moves.
+      ***************************************************************************/
       CheckersMove[] getLegalMoves(int player) {
 
           if (player != RED && player != BLACK)
@@ -386,6 +470,11 @@ public class Checkers extends JPanel {
 
        }
 
+      /***************************************************************************
+      this will check if the player is null, again should be possible bbut checking
+      it anyways. it will then create the arraylist of moves and check if the
+      player ca jump any, it will then create an array of all the possible moves.
+      ***************************************************************************/
       CheckersMove[] getLegalJumpsFrom(int player, int row, int col) {
 
           if (player != RED && player != BLACK)
@@ -416,7 +505,10 @@ public class Checkers extends JPanel {
              return moveArray;
           }
        }
-
+      /***************************************************************************
+      This method simply checks if the player can move and retunrs true or false
+      depending on the results of the if statments.
+      ***************************************************************************/
       private boolean canMove(int player, int r1, int c1, int r2, int c2) {
 
           if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8)
@@ -437,6 +529,10 @@ public class Checkers extends JPanel {
           }
        }
 
+      /***************************************************************************
+      Thsi method checks if the player can jump by running through a series of if
+      statments and then returnign true or false depending.
+      ***************************************************************************/
        private boolean canJump(int player, int r1, int c1, int r2, int c2, int r3, int c3) {
 
           if (r3 < 0 || r3 >= 8 || c3 < 0 || c3 >= 8)
@@ -462,10 +558,17 @@ public class Checkers extends JPanel {
 
        }
 
+       /***************************************************************************
+       The class that will make the move that is selected
+       ***************************************************************************/
       void makeMove(CheckersMove move) {
          makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol);
       }
 
+      /***************************************************************************
+      This class makes the piece move by determining where the piece needs to
+      go based on the move selected.
+      ***************************************************************************/
       void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
          board[toRow][toCol] = board[fromRow][fromCol];
          board[fromRow][fromCol] = EMPTY;
@@ -480,4 +583,4 @@ public class Checkers extends JPanel {
             board[toRow][toCol] = BLACK_KING;
       }
    }
-} 
+}
