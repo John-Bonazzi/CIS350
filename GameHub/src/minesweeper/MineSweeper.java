@@ -1,61 +1,118 @@
 package minesweeper;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import java.io.IOException;
+import java.util.Scanner;
 
-/**************************************************
- * A driver class to instantiate and begin a game of 
- * MineSweeper
- * @author Rosa Fleming * @version February 14,2018
- */
+import javax.swing.JFrame;
 
 public class MineSweeper {
 
-	public static void main(String[] args) {
+    /**
+     * Starts your Minesweeper Game
+     * @param argv You can either pass your Level as parameter of 3 parameters for
+     *             width, heigth and bombs
+     * @throws IOException
+     */
+    public static void main(String[] argv) throws IOException {
+        String input = "";
+        int width = -1;
+        int height = -1;
+        int bombs = -1;
 
-		String x;
-		int boardSize = 0;
-		int temp = 0;
-		x = JOptionPane.showInputDialog(null, "Enter the size of the board.");
+        //Set the Modus
+        if (argv.length == 1) {
+            input = argv[0];
+        }
+        //Set the width, height and the number of Bombs
+        if (argv.length == 3) {
+            width = Integer.parseInt(argv[0]);
+            height = Integer.parseInt(argv[1]);
+            bombs = Integer.parseInt(argv[2]);
+            input = "Custom";
+        }
 
-		// only set board size if it is valid, otherwise prompt user
-		while (boardSize == 0) {
-			temp = Integer.parseInt(x);
-			if (temp <= 30 && temp >= 3) {
-				boardSize = temp;
-			} else {
-				x = JOptionPane.showInputDialog(null, "Please enter an integer between 3 and 30");
-				temp = Integer.parseInt(x);
-			}
+        @SuppressWarnings("resource")
+        Scanner scan = new Scanner(System.in);
 
-		}
+        Model model;
+        
+        System.out.println("Modes: Beginner/Intermediate/Expert/Custom");
 
-		int bombs = 0;
-		x = JOptionPane.showInputDialog(null, "How many mines?");
+        //Annoy the user until he chooses something
+        while (!input.equals("Beginner")
+                && !input.equals("beginner")
+                && !input.equals("Intermediate")
+                && !input.equals("intermediate")
+                && !input.equals("Expert")
+                && !input.equals("expert")
+                && !input.equals("Custom")
+                && !input.equals("custom")) {
 
-		// only set mine number if input is valid, otherwise prompt user until
-		// valid entry
-		while (bombs == 0) {
+            System.out.print("Enter your desired mode: ");
+            input = scan.nextLine();
+        }
 
-			temp = Integer.parseInt(x);
-			if (temp < (boardSize * boardSize) && temp > 0) {
-				bombs = temp;
-			} else {
-				x = JOptionPane.showInputDialog(null,
-						"Please enter an positive number that is less than " + "the number of cells");
-				temp = Integer.parseInt(x);
-			}
-		}
+        //Sets the specific Variables for the modes
+        if (input.equals("Beginner") || input.equals("beginner")) {
+            width = 9;
+            height = 9;
+            bombs = 10;
+            model = new Model(width, height, bombs);
+        } else if (input.equals("Intermediate") || input.equals("intermediate")) {
+            width = 16;
+            height = 16;
+            bombs = 40;
+            model = new Model(width, height, bombs);
+        } else if (input.equals("Expert") || input.equals("expert")) {
+            width = 30;
+            height = 16;
+            bombs = 99;
+            model = new Model(width, height, bombs);
+        } else {
 
-		// top level container
-		JFrame frame = new JFrame("MineSweeper");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            System.out.println();
+            while (width < 6 || width > 35) {
 
-		// instantiate and add panel, passing user input as params
-		MineSweeperPanel panel = new MineSweeperPanel(bombs, boardSize);
-		frame.getContentPane().add(panel);
-		frame.pack();
-		frame.setVisible(true);
-	}
+                System.out.print("Enter your desired width (min:6/max:35): ");
+                width = scan.nextInt();
 
+            }
+
+            System.out.println();
+            while (height < 6 || height > 20) {
+
+                System.out.print("Enter your desired heigth (min:6/max:20): ");
+                height = scan.nextInt();
+
+            }
+
+            int maxbombs = height * width - 1;
+
+            System.out.println();
+            while (bombs < 1 || bombs > maxbombs) {
+                System.out.print("Plese enter the number of Bombs (min:1/max:" + maxbombs + "): ");
+                bombs = scan.nextInt();
+            }
+            //Creating the Model with the desired values
+            model = new Model(width, height, bombs);
+        }
+        
+        //Information about the game
+        System.out.println("\n\nCreating Minesweeper:");
+        System.out.println("Heigth: " + height);
+        System.out.println("Width: " + width);
+        System.out.println("Bombs: " + bombs);
+
+        //Creating the View
+        View view = new View(model);
+
+        JFrame frame = new JFrame("Minesweeper");
+
+        frame.setContentPane(view);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+        frame.setAlwaysOnTop(true);
+
+    }
 }
