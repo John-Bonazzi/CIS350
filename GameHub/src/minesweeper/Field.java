@@ -3,12 +3,15 @@ package minesweeper;
 import java.util.Observable;
 
 /**
- *
+ * A class to create what happens while a user is playing Minesweeper. This class will provide 
+ * what will happen when a bomb is selected, when an empty space is selected, and when a space with
+ * a number is to be selected.
+ * 
  * @author Rosa Fleming
  */
 public class Field extends Observable {
     
-    //No one should change this stuff from the Outside
+    //Variables that will be unchanged by any users playing Minesweeper
     private int field_id;
     private int posx;
     private int posy;
@@ -91,21 +94,21 @@ public class Field extends Observable {
         if (!this.is_flag && !this.getRevealed() && model.getState().equals("running")) {
 
             if (!this.model.getThread().isAlive()) {
-                this.model.startThread();
+               // this.model.startThread();
             }
             this.is_flag = true;
             this.model.subRemainingBombs();
             this.setChanged();
             this.notifyObservers();
         } else if (!this.getRevealed() && model.getState().equals("running")) {
-            this.is_flag = false;
-            this.model.addRemainingBombs();
-            this.setChanged();
-            this.notifyObservers();
+            //this.is_flag = false;
+            //this.model.addRemainingBombs();
+            //this.setChanged();
+            //this.notifyObservers();
         }
 
         if (!model.getState().equals("running")) {
-            this.model.stopThread();
+            //this.model.stopThread();
         }
     }
 
@@ -163,12 +166,12 @@ public class Field extends Observable {
         this.field_id = 9;
     }
 
-    /**
-     *
-     * @return the Model of the field
-     */
-    public Model getModel() {
-        return this.model;
-    }
+//    /**
+//     *
+//     * @return the Model of the field
+//     */
+//    public Model getModel() {
+//        return this.model;
+//    }
 
 }

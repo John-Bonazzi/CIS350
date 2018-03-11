@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 /**
- * View for the Minesweeper Game
+ * View for the Minesweeper Game.
  * @author Rosa Fleming
  */
 public class View extends JPanel implements Observer {
@@ -84,9 +84,9 @@ public class View extends JPanel implements Observer {
     /**
      * @return the view
      */
-    public JPanel getview() {
-        return this.view;
-    }
+   // public JPanel getview() {
+       // return this.view;
+    //}
 
     /**
      * creates restart button

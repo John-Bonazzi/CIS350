@@ -4,7 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- *
+ * Class for Mouse handling
  * @author Rosa Fleming
  */
 public class Controller extends MouseAdapter {
@@ -15,19 +15,19 @@ public class Controller extends MouseAdapter {
     /**
      * Construcor
      *
-     * @param field field of the gam
+     * @param field field of the game
      */
     public Controller(Field field) {
         this.field = field;
     }
 
-    /**
-     * change the field
-     * @param field
-     */
-    public void updateField(Field field) {
-        this.field = field;
-    }
+//    /**
+//     * change the field
+//     * @param field
+//     */
+   // public void updateField(Field field) {
+        //this.field = field;
+    
 
     /**
      * Constructor

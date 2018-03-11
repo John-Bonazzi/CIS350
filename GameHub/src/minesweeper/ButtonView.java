@@ -8,7 +8,7 @@ import java.util.Observer;
 import javax.swing.JButton;
 
 /**
- * 
+ * Setting up the buttons for the game GUI including placement of buttons and color of the buttons.
  * @author Rosa Fleming
  */
 public class ButtonView extends JButton implements Observer {
@@ -19,7 +19,7 @@ public class ButtonView extends JButton implements Observer {
     private Controller controller;
 
     /**
-     * Creates the neccassary Buttons
+     * Creates the necessary Buttons
      *
      * @param field 
      */
@@ -36,13 +36,13 @@ public class ButtonView extends JButton implements Observer {
         return this.button;
     }
 
-    /**
-     * Makes a Button Invisible
-     */
-    public void setUnvisible() {
-        this.button.setVisible(false);
-        this.field.reveal();
-    }
+//    /**
+//     * Makes a Button Invisible
+//     */
+//    public void setUnvisible() {
+//        this.button.setVisible(false);
+//        this.field.reveal();
+//    }
 
     /**
      * Update button view
@@ -56,7 +56,7 @@ public class ButtonView extends JButton implements Observer {
         if (field.getRevealed() == true) {
 
             if (this.field.getField_id() == 9) {
-                this.button.setBackground(Color.red);
+               // this.button.setBackground(Color.red);
                 this.button.setText("B");
             } else {
                 this.button.setBackground(Color.LIGHT_GRAY);
@@ -68,13 +68,13 @@ public class ButtonView extends JButton implements Observer {
             }
         }
         if (field.isFlag()) {
-            this.button.setText("!");
-            this.button.setBackground(Color.orange);
+            this.button.setText("X");
+            //this.button.setBackground(Color.BLUE);
         }
-        if (!field.isFlag() && !field.getRevealed()) {
-            this.button.setText("");
-            this.button.setBackground(new JButton().getBackground());
+        //if (!field.isFlag() && !field.getRevealed()) {
+            //this.button.setText("");
+            //this.button.setBackground(new JButton().getBackground());
         }
     }
 
-}
+

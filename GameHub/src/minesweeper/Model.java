@@ -3,7 +3,9 @@ package minesweeper;
 import java.util.Observable;
 
 /**
- * Model for Minesweeper
+ * Model for Minesweeper. This will set up randomly placed bombs alongside the numbers to indicate to the user that
+ * there are bombs surrounding those numbers. This will also set up the timer, and the size of the game board. This
+ * will also set up a button for the user to restart the game with a new randomly generate board.
  *
  * @author Rosa Fleming
  *
@@ -89,7 +91,7 @@ public class Model extends Observable {
 
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        //e.printStackTrace();
                     }
 
                 }
@@ -138,26 +140,26 @@ public class Model extends Observable {
      * @param x width
      * @return count of bombs around
      */
-    public int nearbombs(int y, int x) {
+//    public int nearbombs(int y, int x) {
+//
+//        int result = 0;
+//        int ax;
+//        int ay;
+//        for (int i = -1; i < 2; i++) {
+//            for (int j = -1; j < 2; j++) {
+//                ay = y + i;
+//                ax = x + j;
+//                if (ay >= 0 && ay < this.height && ax >= 0 && ax < this.width) {
+//                    if (this.field[ay][ax].getField_id() == 9) {
+//                        result++;
+//                    }
+//                }
+//
+//            }
+//        }
+//        return result;
 
-        int result = 0;
-        int ax;
-        int ay;
-        for (int i = -1; i < 2; i++) {
-            for (int j = -1; j < 2; j++) {
-                ay = y + i;
-                ax = x + j;
-                if (ay >= 0 && ay < this.height && ax >= 0 && ax < this.width) {
-                    if (this.field[ay][ax].getField_id() == 9) {
-                        result++;
-                    }
-                }
-
-            }
-        }
-        return result;
-
-    }
+    //}
 
     /**
      * Add 1 to all fields around
@@ -210,23 +212,6 @@ public class Model extends Observable {
     }
 
     /**
-     * Prints the field to console (for Debugging Stuff)
-     */
-    public void printArray() {
-
-        System.out.println();
-        for (int i = 0; i < height; i++) {
-
-            for (int j = 0; j < width; j++) {
-                System.out.print(field[i][j].getField_id() + " ");
-            }
-
-            System.out.println();
-
-        }
-    }
-
-    /**
      * Sets the State
      *
      * @param state Status
@@ -238,7 +223,7 @@ public class Model extends Observable {
     }
 
     /**
-     * Sets all the feilds
+     * Sets all the fields
      */
     private void setAllFields() {
         for (int i = 0; i < this.height; i++) {
@@ -273,14 +258,14 @@ public class Model extends Observable {
         this.notifyObservers();
     }
 
-    /**
-     * Adds 1 to the remaining bombs
-     */
-    public void addRemainingBombs() {
-        this.bombs_left++;
-        this.setChanged();
-        this.notifyObservers();
-    }
+//    /**
+//     * Adds 1 to the remaining bombs
+//     */
+//    public void addRemainingBombs() {
+//        this.bombs_left++;
+//        this.setChanged();
+//        this.notifyObservers();
+//    }
 
     /**
      * Removes 1 of the remaining bombs
@@ -359,21 +344,21 @@ public class Model extends Observable {
         return this.field[height][width];
     }
 
-    /**
-     * 
-     * @return the field as an Array
-     */
-    public Field[][] getFields() {
-        return this.field;
-    }
+//    /**
+//     * 
+//     * @return the field as an Array
+//     */
+//    public Field[][] getFields() {
+//        return this.field;
+//    }
 
-    /**
-     *
-     * @return number of Bombs
-     */
-    public int getBombs() {
-        return this.bombs;
-    }
+//    /**
+//     *
+//     * @return number of Bombs
+//     */
+//    public int getBombs() {
+//        return this.bombs;
+//    }
 
     /**
      *
