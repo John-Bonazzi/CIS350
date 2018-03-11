@@ -45,7 +45,7 @@ We are still discussing the possibility to save and load a specific player.
 
 ### Project EVA
 
-| Task # | Task | Est. | Actual |
+| Task # | Task | Planned Effort | Actual Effort|
 |--------|------|------|--------|
 | 1 | Project Design | 7 | 7 |
 | 2 | game's code | 7 | 14 |
