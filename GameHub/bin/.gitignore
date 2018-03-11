@@ -1,7 +1,6 @@
-/game_utilities/
-/memory/
 /checkers/
 /exceptions/
+/game_utilities/
 /gui/
+/memory/
 /minesweeper/
-/sudoku/
