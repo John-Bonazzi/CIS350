@@ -5,7 +5,7 @@ public abstract class Checkers extends Applet {
     /***************************************************************************
     This class will set the layout to null because i would like to
     do the layout on my own, sets the background color of the applet.
-    creates a new object checkerCanvas. adds the ojebext just created.
+    creates a new object checkerCanvas. adds the ojebect just created.
     sets the beackground color of the buttons created in the canvas.
     as well as adds these buttons to board. it also sets the bounds
     of the board as well as the buttons and message.
