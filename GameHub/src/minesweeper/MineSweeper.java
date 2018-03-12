@@ -1,61 +1,30 @@
-package project3;
+package minesweeper;
+
+import java.io.IOException;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-/**************************************************
- * A driver class to instantiate and begin a game of 
- * MineSweeper
- * @author Rosa Fleming * @version February 14,2018
- */
 
 public class MineSweeper {
 
-	public static void main(String[] args) {
+    /**
+     * Setting up the size and number of bombs for the game and then starting the Minesweeper Game
+     * @param argv 
+     * @throws IOException
+     */
+    public static void main(String[] argv) throws IOException {
+        Model model;
+            model = new Model(6, 6, 3);
 
-		String x;
-		int boardSize = 0;
-		int temp = 0;
-		x = JOptionPane.showInputDialog(null, "Enter the size of the board.");
+        //Creating the View
+        View view = new View(model);
 
-		// only set board size if it is valid, otherwise prompt user
-		while (boardSize == 0) {
-			temp = Integer.parseInt(x);
-			if (temp <= 30 && temp >= 3) {
-				boardSize = temp;
-			} else {
-				x = JOptionPane.showInputDialog(null, "Please enter an integer between 3 and 30");
-				temp = Integer.parseInt(x);
-			}
+        JFrame frame = new JFrame("Minesweeper");
+        frame.setContentPane(view);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+        frame.setAlwaysOnTop(true);
 
-		}
-
-		int bombs = 0;
-		x = JOptionPane.showInputDialog(null, "How many mines?");
-
-		// only set mine number if input is valid, otherwise prompt user until
-		// valid entry
-		while (bombs == 0) {
-
-			temp = Integer.parseInt(x);
-			if (temp < (boardSize * boardSize) && temp > 0) {
-				bombs = temp;
-			} else {
-				x = JOptionPane.showInputDialog(null,
-						"Please enter an positive number that is less than " + "the number of cells");
-				temp = Integer.parseInt(x);
-			}
-		}
-
-		// top level container
-		JFrame frame = new JFrame("MineSweeper");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		// instantiate and add panel, passing user input as params
-		MineSweeperPanel panel = new MineSweeperPanel(bombs, boardSize);
-		frame.getContentPane().add(panel);
-		frame.pack();
-		frame.setVisible(true);
-	}
-
+    }
 }
