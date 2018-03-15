@@ -4,3 +4,5 @@ runcmds.txt
 *.class
 .settings
 .classpath
+*.png
+.checkstyle
