@@ -12,7 +12,7 @@ public class Checkers extends JPanel {
 	/***************************************************************************
 	  This is the main class that will create the new jframe as well as set
 	  screensize, and set all visibilities.
-    @param args memory of strings from the cosole line.
+    @param args array of strings from the console line.
     ***************************************************************************/
    public static void main(String[] args) {
       JFrame window = new JFrame("Checkers");
