@@ -1,3 +1,4 @@
+package game;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -380,7 +381,7 @@ public class Checkers extends JPanel {
 
    /***************************************************************************
    The CheckersData class is the main class that stores the data for the pieces
-   as well as the moves. 
+   as well as the moves.
    ***************************************************************************/
    private static class CheckersData {
       static final int
@@ -494,11 +495,15 @@ public class Checkers extends JPanel {
 
        }
 
-      /***************************************************************************
-      this will check if the player is null, again should be possible bbut checking
-      it anyways. it will then create the arraylist of moves and check if the
-      player ca jump any, it will then create an array of all the possible moves.
-      ***************************************************************************/
+       /***************************************************************************
+       this will check if the player is null, again should be impossible but checking
+       it anyways. it will then create the arraylist of moves and check if the
+       player can jump any, it will then create an array of all the possible moves.
+       @param player the current player.
+       @param row the pawn's row.
+       @param col the pawn's column.
+       @return return an array of all the possible moves.
+       ***************************************************************************/
       public CheckersMove[] getLegalJumpsFrom(int player, int row, int col) {
 
           if (player != RED && player != BLACK)
@@ -529,10 +534,15 @@ public class Checkers extends JPanel {
              return moveArray;
           }
        }
-      /***************************************************************************
-      This method simply checks if the player can move and retunrs true or false
-      depending on the results of the if statments.
-      ***************************************************************************/
+
+       /***************************************************************************
+       This method simply checks if the player can move.
+       @param player the player making the move.
+       @param r1 The starting row.
+       @param c1 The starting column.
+       @param r2 The destination's row.
+       @param c2 the destination's column.
+       ***************************************************************************/
       private boolean canMove(int player, int r1, int c1, int r2, int c2) {
 
           if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8)
@@ -553,10 +563,18 @@ public class Checkers extends JPanel {
           }
        }
 
-      /***************************************************************************
-      Thsi method checks if the player can jump by running through a series of if
-      statments and then returnign true or false depending.
-      ***************************************************************************/
+       /***************************************************************************
+       This method checks if the player can jump by running through a series of if
+       statments and then returnign true or false depending.
+       @param player The player making the move.
+       @param r1 The starting row.
+       @param c1 The starting column.
+       @param r2 The enemy pawn's row.
+       @param c2 the enemy pawn's column.
+       @param r3 The destination's row.
+       @param c3 The destination's column.
+       @return if the player's pawn can make the jump.
+       ***************************************************************************/
        private boolean canJump(int player, int r1, int c1, int r2, int c2, int r3, int c3) {
 
           if (r3 < 0 || r3 >= 8 || c3 < 0 || c3 >= 8)
@@ -583,7 +601,9 @@ public class Checkers extends JPanel {
        }
 
        /***************************************************************************
-       The class that will make the move that is selected
+       The class that will make the move that is selected, and apply it to the
+       board.
+       @param move object containing the pawn's move
        ***************************************************************************/
       public void makeMove(CheckersMove move) {
          makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol);
@@ -592,6 +612,10 @@ public class Checkers extends JPanel {
       /***************************************************************************
       This class makes the piece move by determining where the piece needs to
       go based on the move selected.
+      @param fromRow The starting row.
+      @param fromCol The starting column.
+      @param toRow The destination's row.
+      @param toCol The destination's col.
       ***************************************************************************/
       public void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
          board[toRow][toCol] = board[fromRow][fromCol];
