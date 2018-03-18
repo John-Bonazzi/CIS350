@@ -27,21 +27,21 @@ We are still discussing the possibility to save and load a specific player.
 
 ### Workflow:
 
-| Task # | Task | Week(s) | Description | Completed On |
-|--------|------|---------|-------------|--------------|
-| 1 | Project Design | 2/5 - 2/12 | Meeting with the group to decide the project requirements | 2/12 |
-| 2 | Complete the game's code (not GUI) | 2/12 - 2/19 | Complete the game's code, there is no need to write a GUI at this point | 3/7 |
-| 3 | Make a GUI for the games (not final GUI) | 2/19 - 3/5 | Write a GUI to play checkers and minesweeper | 3/7 |
-| 4 | Comments | 3/5 - 3/9 | Finish writing Javadoc comments for all your classes. Make sure they follow the GVSU [Java Coding Style](http://www.cis.gvsu.edu/java-coding-style-guide/)| 3/11 |
-| 5 | Complete abstract classes | 2/19 - 3/12 | Make a prototype of a game using abstract classes and inheritance, preparing the project for the second deliverable | 3/6 |
-| 6 | Code coverage | 3/7 - 3/11 | Use ElcEmma to test code coverage of checkers and minesweeper | 3/11 |
-| 7 | Sudoku | 3/7 - 3/12 | Complete the Sudoku game for the second deliverable, no GUI yet | - |
-| 8 | Refactor checkers and minesweeper | 3/12 - 3/19 | Change the code for the two games in order to have some objects in common. The parent classes are provided | - |
-| 9 | Complete GUI | 3/12 - 3/26 | Make a unified GUI for all games. | - |
-| 10| Testing | 3/19 - TBD | Test the code using JUnit classes| - |
-| 11| Expand | TBD - TBD | Show statistics, Save and load, Leaderboard | - |
-| 12| make a NPC AI | TBD - TBD | make an AI to play against you in checkers | - |
-| 13| other | TBD - TBD | TBD | - |
+| Task # | Task | Week(s) | Description | Started On | Completed On |
+|--------|------|---------|-------------|------------|--------------|
+| 1 | Project Design | 2/5 - 2/12 | Meeting with the group to decide the project requirements | 2/5 | 2/12 |
+| 2 | Complete the game's code (not GUI) | 2/12 - 2/19 | Complete the game's code, there is no need to write a GUI at this point | 2/12 | 3/7 |
+| 3 | Make a GUI for the games (not final GUI) | 2/19 - 3/5 | Write a GUI to play checkers and minesweeper | 2/19 | 3/7 |
+| 4 | Comments | 3/5 - 3/9 | Finish writing Javadoc comments for all your classes. Make sure they follow the GVSU [Java Coding Style](http://www.cis.gvsu.edu/java-coding-style-guide/)| 3/5 | 3/11 |
+| 5 | Complete abstract classes | 2/19 - 3/12 | Make a prototype of a game using abstract classes and inheritance, preparing the project for the second deliverable | 2/19 | 3/6 |
+| 6 | Code coverage | 3/7 - 3/11 | Use ElcEmma to test code coverage of checkers and minesweeper | 3/7 | 3/11 |
+| 7 | Sudoku | 3/7 - 3/12 | Complete the Sudoku game for the second deliverable, no GUI yet | - | - |
+| 8 | Refactor checkers and minesweeper | 3/12 - 3/19 | Change the code for the two games in order to have some objects in common. The parent classes are provided | - | - |
+| 9 | Complete GUI | 3/12 - 3/26 | Make a unified GUI for all games. | - | - |
+| 10| Testing | 3/19 - TBD | Test the code using JUnit classes| - | - |
+| 11| Expand | TBD - TBD | Show statistics, Save and load, Leaderboard | - | - |
+| 12| make a NPC AI | TBD - TBD | make an AI to play against you in checkers | - | - |
+| 13| other | TBD - TBD | TBD | - | - |
 
 ### Project EVA
 
