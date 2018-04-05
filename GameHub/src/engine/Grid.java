@@ -1,5 +1,6 @@
 package engine;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 public class Grid{
 
   /*
@@ -60,7 +61,7 @@ public class Grid{
 
   private double[] getRowPoints(){
     double height=this.size.height;
-    double numPoints= ( this.rows - 1 );
+    int numPoints= ( this.rows - 1 );
 
     double[] output=new double[numPoints];
 
@@ -82,11 +83,11 @@ public class Grid{
   }
   private double[] getColPoints(){
     double wid = this.size.width;
-    double numPoints= ( this.cols - 1 );
+    int numPoints= ( this.cols - 1 );
     double[] output=new double[numPoints];
 
     double c=0;
-    double squareWidth = width / this.cols;
+    double squareWidth = wid / this.cols;
 
     for(int i=0; i<numPoints; i++){
       output[i]= c;

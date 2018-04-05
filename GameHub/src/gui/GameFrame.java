@@ -1,13 +1,12 @@
-package gui;
 import javax.swing.*;
 import java.awt.*;
 
-public class Frame extends JFrame{
+public class GameFrame extends JFrame{
 
   Dimension size;
   String title;
 
-  public Frame(String title,Dimension size) {
+  public GameFrame(String title,Dimension size) {
 		super(title);
     this.title = title;
     this.size = size;
