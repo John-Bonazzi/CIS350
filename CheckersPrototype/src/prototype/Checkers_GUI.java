@@ -10,7 +10,7 @@ public class Checkers_GUI extends JFrame{
   private JPanel statsPanel;
   private JPanel controlPanel;
 
-  public Checkers_GUI(int xDimension, int yDimension){
+  public Checkers_GUI(int xDimension, int yDimension, Game game){
     super("Checkers");
     
     SIZE=new Dimension(xDimension,yDimension);
@@ -19,7 +19,8 @@ public class Checkers_GUI extends JFrame{
     mainPanel=new JPanel(new BorderLayout());
 
     //Takes up 3/4 of the screen.
-    checkersPanel= new CheckersPanel((int)(SIZE.width*.75),(int)(SIZE.height*.75));
+    
+    checkersPanel= new CheckersPanel((int)(SIZE.width*.75),(int)(SIZE.height*.75), game);
     statsPanel = new JPanel(new GridLayout());
     controlPanel= new JPanel(new GridLayout());
 
@@ -41,11 +42,7 @@ public class Checkers_GUI extends JFrame{
     this.pack();
   }
 
-  public static void main(String[] args) {
-	  Checkers_GUI c=new Checkers_GUI(700,700);
-	  c.setVisible(true);
-
-  }
+  
 
 
 
