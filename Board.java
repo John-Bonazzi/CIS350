@@ -9,12 +9,12 @@ public class Board {
 	}
 
 	private void Init() {
-		for (int r = 0; r < SIZE; r++) {
-			for (int c = 0; c < SIZE; c++) {
-				if (r % 2 == c % 2) {
-					if (r < 3)
+		for (int c = 0; c < SIZE; c++) {
+			for (int r = 0; r < SIZE; r++) {
+				if (r % 2 != c % 2) {
+					if (c < 3)
 						board[r][c] = ColorStatus.BLACK;
-					else if (r > 4)
+					else if (c > 4)
 						board[r][c] = ColorStatus.WHITE;
 					else
 						board[r][c] = ColorStatus.EMPTY;
@@ -61,70 +61,127 @@ public class Board {
 
 	public boolean[][] checkerCanBeSelected(Player player) {
 		ColorStatus playerColor = player.playerColor();
+		ColorStatus checkerKing = ColorStatus.EMPTY;
+		if (playerColor == ColorStatus.WHITE) {
+			checkerKing = ColorStatus.WHITE_KING;
+		} else if (playerColor == ColorStatus.BLACK) {
+			checkerKing = ColorStatus.BLACK_KING;
+		}
 		boolean[][] boardColor = new boolean[SIZE][SIZE];
-		boolean thereIsJump = false; //If there is at least one checker that can jump, then no checker can move.
-		for(int i = 0; i < this.SIZE; i++) {
-			for(int j = 0; j < this.SIZE; j++) {
-				if(this.board[i][j] != ColorStatus.EMPTY)
-					boardColor[i][j] = this.canMove(playerColor, i, j, )
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
+				boardColor[i][j] = false;
 			}
 		}
-		if(thereIsJump)
-			return boardColor;
-		for(int i = 0; i < this.SIZE; i++) {
-			for(int j = 0; j < this.SIZE; j++) {
+		
+		
+		
+		boolean thereIsJump = false; // If there is at least one checker that can jump, then no checker can move.
+		
+		
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
 				
+			}
+		}
+		
+		
+		
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
+
+				if (this.board[j][i] != ColorStatus.EMPTY) {
+					/*
+					 * White: i+1, j-1 i-1, j-1
+					 *
+					 * Black: i-1, j+1 i+1, j+1
+					 */
+					if (playerColor == ColorStatus.WHITE || playerColor == checkerKing) {
+						boardColor[i][j] = this.canJump(playerColor, i, j, i + 1, j - 1, i + 2, j - 2)
+								|| this.canJump(playerColor, i, j, i - 1, j - 1, i - 2, j - 2);
+					}
+					if (playerColor == ColorStatus.BLACK || playerColor == checkerKing) {
+						boardColor[i][j] = this.canJump(playerColor, i, j, i - 1, j + 1, i - 2, j + 2)
+								|| this.canJump(playerColor, i, j, i + 1, j - 1, i + 2, j - 2);
+					}
+					if (boardColor[i][j])
+						thereIsJump = true;
+				}
+			}
+		}
+		if (thereIsJump)
+			return boardColor;
+
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
+
+				if (playerColor == ColorStatus.WHITE || playerColor == checkerKing) {
+					boardColor[j][i] = this.canMove(playerColor, i, j, i + 1, j - 1)
+							|| this.canMove(playerColor, i, j, i - 1, j - 1);
+				}
+				if (playerColor == ColorStatus.BLACK || playerColor == checkerKing) {
+					boardColor[j][i] = this.canMove(playerColor, i, j, i - 1, j + 1)
+							|| this.canMove(playerColor, i, j, i + 1, j - 1);
+				}
+
 			}
 		}
 		return boardColor;
 	}
-	
-	private boolean canMove(ColorStatus player, int ir, int ic, int fr, int fc) throws OutOfBoundsException {
 
-		if (checkBounds(ir, ic) || checkBounds(fr, fc))
-			//throw new OutOfBoundsException();
+	public boolean canMove(ColorStatus player, ColorStatus king, int r, int c) {
+
+//		int temp = ir;
+//		ir = ic;
+//		ic = temp;
+//		temp = fr;
+//		fr = fc;
+//		fc = temp;
+		
+		
+		if (checkBounds(r, r+1) || checkBounds(c, c+1))
+			// throw new OutOfBoundsException();
 			return false;
+		boolean result = false;
+		
+		if (this.board[r][c] == player || this.board[r][c] == king) {			
+			if (player == ColorStatus.WHITE || king == ColorStatus.BLACK_KING)
+				result = result || this.board[r-1][c+1] == ColorStatus.EMPTY || this.board[r-1][c-1] == ColorStatus.EMPTY;
+			if(player == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
+				result = result || this.board[r+1][c+1] == ColorStatus.EMPTY || this.board[r+1][c-1] == ColorStatus.EMPTY;
+			}
+		}
+		return result;
+	}
+
+	private boolean canJump(ColorStatus player, int ir, int ic, int mr, int mc, int fr, int fc)
+			throws OutOfBoundsException {
+		if (checkBounds(ir, ic) || checkBounds(mr, mc) || checkBounds(fr, fc))
+			return false;
+		// throw new OutOfBoundsException();
 
 		if (this.board[fr][fc] != ColorStatus.EMPTY)
 			return false;
-		else if (player == ColorStatus.WHITE) {
+		if (player == ColorStatus.WHITE) {
 			if (this.board[ir][ic] == ColorStatus.WHITE && fr > ir)
 				return false;
+			if (this.board[mr][mc] != ColorStatus.BLACK && this.board[ir][ic] != ColorStatus.BLACK_KING)
+				return false;
 			return true;
-		}
-		else if (player == ColorStatus.BLACK) {
+		} else {
 			if (this.board[ir][ic] == ColorStatus.BLACK && fr < ir)
+				return false;
+			if (this.board[mr][mc] == ColorStatus.WHITE && this.board[mr][mc] != ColorStatus.WHITE_KING)
 				return false;
 			return true;
 		}
-		else//probably not going to be reached.just in case
-			return false;
 	}
 
-	private boolean canJump(ColorStatus player, int ir, int ic, int mr, int mc, int fr, int fc) throws OutOfBoundsException{
-     if(checkBounds(ir, ic) || checkBounds(mr, mc) || checkBounds(fr, fc))
-        //throw new OutOfBoundsException();
-    	 	return false;
-    if(this.board[fr][fc] != ColorStatus.EMPTY)
-      return false;
-    if(player == ColorStatus.WHITE){
-      if(this.board[ir][ic] == ColorStatus.WHITE && fr > ir)
-        return false;
-      if(this.board[mr][mc] != ColorStatus.BLACK && this.board[ir][ic] != ColorStatus.BLACK_KING)
-        return false;
-      return true;
-    }
-    else{
-      if(this.board[ir][ic] == ColorStatus.BLACK && fr < ir)
-        return false;
-      if(this.board[mr][mc] == ColorStatus.WHITE && this.board[mr][mc] != ColorStatus.WHITE_KING )
-        return false;
-      return true;
-    }
-  }
-
+	/*
+	 * Returns true if the index is outside of the boundaries of the game.
+	 */
 	private boolean checkBounds(int num1, int num2) {
-		return (num1 < 0 && num1 >= SIZE) || (num2 < 0 && num2 >= SIZE);
+		return (num1 < 0 || num1 >= SIZE) || (num2 < 0 || num2 >= SIZE);
 	}
-	
+
 }
