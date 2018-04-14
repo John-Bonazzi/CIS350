@@ -176,60 +176,34 @@ public class Board {
 		}
 
 		boolean result = false;
+		ColorStatus enemyChecker;
+		ColorStatus enemyKing;
+		if(player == ColorStatus.BLACK) {
+			enemyChecker = ColorStatus.WHITE;
+			enemyKing = ColorStatus.WHITE_KING;
+		}
+		else {
+			enemyChecker = ColorStatus.BLACK;
+			enemyKing = ColorStatus.BLACK_KING;
+		}
+		
 		if (this.board[r][c] == player || this.board[r][c] == king) {
-			if (player == ColorStatus.WHITE) {
+			if (player == ColorStatus.WHITE || king == ColorStatus.BLACK_KING) {
 				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.BLACK
-								|| this.board[up][right] == ColorStatus.BLACK_KING)
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == enemyChecker
+								|| this.board[up][right] == enemyKing)
 
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.BLACK
-								|| this.board[up][left] == ColorStatus.BLACK_KING);
-			}
-
-			if (player == ColorStatus.BLACK) {
-				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.WHITE
-								|| this.board[up][right] == ColorStatus.WHITE_KING)
-
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.WHITE
-								|| this.board[up][left] == ColorStatus.WHITE_KING);
-			}
-
-			if (player == ColorStatus.WHITE_KING) {
-				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.BLACK
-								|| this.board[up][right] == ColorStatus.BLACK_KING)
-
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.BLACK
-								|| this.board[up][left] == ColorStatus.BLACK_KING)
-
-						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY
-								&& this.board[down][right] == ColorStatus.BLACK
-								|| this.board[down][right] == ColorStatus.BLACK_KING)
-
-						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY && this.board[down][left] == ColorStatus.BLACK
-								|| this.board[down][left] == ColorStatus.BLACK_KING);
-			}
-
-			if (player == ColorStatus.BLACK_KING) {
-				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.WHITE
-								|| this.board[up][right] == ColorStatus.WHITE_KING)
-
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.WHITE
-								|| this.board[up][left] == ColorStatus.WHITE_KING)
-
-						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY
-								&& this.board[down][right] == ColorStatus.WHITE
-								|| this.board[down][right] == ColorStatus.WHITE_KING)
-
-						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY && this.board[down][left] == ColorStatus.WHITE
-								|| this.board[down][left] == ColorStatus.WHITE_KING);
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == enemyChecker
+								|| this.board[up][left] == enemyKing);
 			}
 
 			if (player == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
-				result = result || this.board[downJ][rightJ] == ColorStatus.EMPTY
-						|| this.board[downJ][leftJ] == ColorStatus.EMPTY;
+				result = result
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == enemyChecker
+								|| this.board[up][right] == enemyKing)
+
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == enemyChecker
+								|| this.board[up][left] == enemyKing);
 			}
 
 		}
