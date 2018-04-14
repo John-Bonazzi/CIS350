@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<project name="prototype" default="all" basedir=".">
+  <property name="src"   value="src"/>
+  <property name="build" value="build"/>
+  <property name="lib"   value="lib"/>
+
+<target name="all" depends="clean, compile, run" description="Builds the whole project">
+    <echo>Doing all</echo>
+  </target>
+
+<target name="Clean" description="Removes previous build">
+    <delete verbose="true">
+      <fileset dir="${build}"/>
+    </delete>
+  </target>
+
+<target name="compile" depends="clean" description="compile whole project">
+    <echo>compile ${ant.project.name} </echo>
+    <javac srcdir="${src}" destdir="${build}" includes="GameisRunningException.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="MListener.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="ColorStatus.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="Player.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="Board.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="Game.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="CheckersPanel.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="Checkers_GUI.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="Checkers.java"/>
+  </target>
+
+<target name="run" depends="compile">
+       <java classname="Checkers" fork="true"></java>
+</target>
+
+</project>
