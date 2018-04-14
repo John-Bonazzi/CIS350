@@ -30,7 +30,7 @@ public class Board {
 
 	public int getValue(int posx, int posy) throws OutOfBoundsException {
 
-		if (checkBounds(posx, posy))
+		if (checkBounds(posx) || checkBounds(posy))
 			throw new OutOfBoundsException();
 
 		ColorStatus status = getColor(posx, posy);
@@ -51,7 +51,7 @@ public class Board {
 	}
 
 	public ColorStatus getColor(int posx, int posy) throws OutOfBoundsException {
-		if (checkBounds(posx, posy))
+		if (checkBounds(posx) || checkBounds(posy))
 			throw new OutOfBoundsException();
 
 		return this.board[posx][posy];
@@ -59,129 +59,188 @@ public class Board {
 
 	// FIXME: make a getLegalJumpsFrom
 
-	public boolean[][] checkerCanBeSelected(Player player) {
+	public boolean[][] canSelect(Player player) {
 		ColorStatus playerColor = player.playerColor();
-		ColorStatus checkerKing = ColorStatus.EMPTY;
-		if (playerColor == ColorStatus.WHITE) {
-			checkerKing = ColorStatus.WHITE_KING;
-		} else if (playerColor == ColorStatus.BLACK) {
-			checkerKing = ColorStatus.BLACK_KING;
-		}
+		ColorStatus checkerKing = player.kingColor();
 		boolean[][] boardColor = new boolean[SIZE][SIZE];
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < SIZE; j++) {
-				boardColor[i][j] = false;
+		for (int row = 0; row < SIZE; row++) {
+			for (int col = 0; col < SIZE; col++) {
+				boardColor[row][col] = false;
 			}
 		}
-		
-		
-		
-		boolean thereIsJump = false; // If there is at least one checker that can jump, then no checker can move.
-		
-		
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < SIZE; j++) {
-				
-			}
-		}
-		
-		
-		
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < SIZE; j++) {
 
-				if (this.board[j][i] != ColorStatus.EMPTY) {
-					/*
-					 * White: i+1, j-1 i-1, j-1
-					 *
-					 * Black: i-1, j+1 i+1, j+1
-					 */
-					if (playerColor == ColorStatus.WHITE || playerColor == checkerKing) {
-						boardColor[i][j] = this.canJump(playerColor, i, j, i + 1, j - 1, i + 2, j - 2)
-								|| this.canJump(playerColor, i, j, i - 1, j - 1, i - 2, j - 2);
-					}
-					if (playerColor == ColorStatus.BLACK || playerColor == checkerKing) {
-						boardColor[i][j] = this.canJump(playerColor, i, j, i - 1, j + 1, i - 2, j + 2)
-								|| this.canJump(playerColor, i, j, i + 1, j - 1, i + 2, j - 2);
-					}
-					if (boardColor[i][j])
-						thereIsJump = true;
-				}
-			}
-		}
-		if (thereIsJump)
-			return boardColor;
+		for (int row = 0; row < SIZE; row++) {
+			for (int col = 0; col < SIZE; col++) {
 
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < SIZE; j++) {
-
-				if (playerColor == ColorStatus.WHITE || playerColor == checkerKing) {
-					boardColor[j][i] = this.canMove(playerColor, i, j, i + 1, j - 1)
-							|| this.canMove(playerColor, i, j, i - 1, j - 1);
-				}
-				if (playerColor == ColorStatus.BLACK || playerColor == checkerKing) {
-					boardColor[j][i] = this.canMove(playerColor, i, j, i - 1, j + 1)
-							|| this.canMove(playerColor, i, j, i + 1, j - 1);
-				}
+				boardColor[row][col] = canMove(playerColor, checkerKing, row, col);
 
 			}
 		}
+
+		// for (int i = 0; i < SIZE; i++) {
+		// for (int j = 0; j < SIZE; j++) {
+		//
+		// if (playerColor == ColorStatus.WHITE || playerColor == checkerKing) {
+		// boardColor[j][i] = this.canMove(playerColor, i, j, i + 1, j - 1)
+		// || this.canMove(playerColor, i, j, i - 1, j - 1);
+		// }
+		// if (playerColor == ColorStatus.BLACK || playerColor == checkerKing) {
+		// boardColor[j][i] = this.canMove(playerColor, i, j, i - 1, j + 1)
+		// || this.canMove(playerColor, i, j, i + 1, j - 1);
+		// }
+		//
+		// }
+		// }
 		return boardColor;
 	}
 
 	public boolean canMove(ColorStatus player, ColorStatus king, int r, int c) {
+		int up, down, left, right;
+		up = r - 1;
+		down = r + 1;
+		left = c - 1;
+		right = c + 1;
+		if (checkBounds(up))
+			up = down;
+		if (checkBounds(down))
+			down = up;
+		if (checkBounds(left))
+			left = right;
+		if (checkBounds(right))
+			right = left;
 
-//		int temp = ir;
-//		ir = ic;
-//		ic = temp;
-//		temp = fr;
-//		fr = fc;
-//		fc = temp;
-		
-		
-		if (checkBounds(r, r+1) || checkBounds(c, c+1))
-			// throw new OutOfBoundsException();
-			return false;
 		boolean result = false;
-		
-		if (this.board[r][c] == player || this.board[r][c] == king) {			
+
+		if (this.board[r][c] == player || this.board[r][c] == king) {
 			if (player == ColorStatus.WHITE || king == ColorStatus.BLACK_KING)
-				result = result || this.board[r-1][c+1] == ColorStatus.EMPTY || this.board[r-1][c-1] == ColorStatus.EMPTY;
-			if(player == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
-				result = result || this.board[r+1][c+1] == ColorStatus.EMPTY || this.board[r+1][c-1] == ColorStatus.EMPTY;
+				result = result || this.board[up][right] == ColorStatus.EMPTY
+						|| this.board[up][left] == ColorStatus.EMPTY;
+			if (player == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
+				result = result || this.board[down][right] == ColorStatus.EMPTY
+						|| this.board[down][left] == ColorStatus.EMPTY;
 			}
 		}
 		return result;
 	}
 
-	private boolean canJump(ColorStatus player, int ir, int ic, int mr, int mc, int fr, int fc)
-			throws OutOfBoundsException {
-		if (checkBounds(ir, ic) || checkBounds(mr, mc) || checkBounds(fr, fc))
-			return false;
-		// throw new OutOfBoundsException();
-
-		if (this.board[fr][fc] != ColorStatus.EMPTY)
-			return false;
-		if (player == ColorStatus.WHITE) {
-			if (this.board[ir][ic] == ColorStatus.WHITE && fr > ir)
-				return false;
-			if (this.board[mr][mc] != ColorStatus.BLACK && this.board[ir][ic] != ColorStatus.BLACK_KING)
-				return false;
-			return true;
-		} else {
-			if (this.board[ir][ic] == ColorStatus.BLACK && fr < ir)
-				return false;
-			if (this.board[mr][mc] == ColorStatus.WHITE && this.board[mr][mc] != ColorStatus.WHITE_KING)
-				return false;
-			return true;
+	public boolean[][] showOptions(Player player, int row, int col) {
+		ColorStatus color = player.playerColor();
+		ColorStatus king = player.kingColor();
+		boolean[][] result = new boolean[SIZE][SIZE];
+		
+		for(int r = 0; r < SIZE; r++) {
+			for(int c = 0; c < SIZE; c++) {
+				result[r][c] = false;
+			}
 		}
+		if(row == -1 && col == -1) {
+			return result;
+		}
+		
+		if(canJump(color, king, row, col)) {
+			
+		}
+			
+		
+	}
+
+	private boolean canJump(ColorStatus player, ColorStatus king, int r, int c) {
+		int up, down, left, right;
+		int upJ, downJ, leftJ, rightJ;
+
+		up = r - 1;
+		down = r + 1;
+		left = c - 1;
+		right = c + 1;
+
+		upJ = r - 2;
+		downJ = r + 2;
+		leftJ = c - 2;
+		rightJ = c + 2;
+		if (checkBounds(upJ)) {
+			up = down;
+			upJ = downJ;
+		}
+		if (checkBounds(downJ)) {
+			down = up;
+			downJ = upJ;
+		}
+
+		if (checkBounds(leftJ)) {
+			left = right;
+			leftJ = rightJ;
+		}
+		if (checkBounds(rightJ)) {
+			right = left;
+			rightJ = leftJ;
+		}
+
+		boolean result = false;
+		if (this.board[r][c] == player || this.board[r][c] == king) {
+			if (player == ColorStatus.WHITE) {
+				result = result
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.BLACK
+								|| this.board[up][right] == ColorStatus.BLACK_KING)
+
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.BLACK
+								|| this.board[up][left] == ColorStatus.BLACK_KING);
+			}
+
+			if (player == ColorStatus.BLACK) {
+				result = result
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.WHITE
+								|| this.board[up][right] == ColorStatus.WHITE_KING)
+
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.WHITE
+								|| this.board[up][left] == ColorStatus.WHITE_KING);
+			}
+
+			if (player == ColorStatus.WHITE_KING) {
+				result = result
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.BLACK
+								|| this.board[up][right] == ColorStatus.BLACK_KING)
+
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.BLACK
+								|| this.board[up][left] == ColorStatus.BLACK_KING)
+
+						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY
+								&& this.board[down][right] == ColorStatus.BLACK
+								|| this.board[down][right] == ColorStatus.BLACK_KING)
+
+						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY && this.board[down][left] == ColorStatus.BLACK
+								|| this.board[down][left] == ColorStatus.BLACK_KING);
+			}
+
+			if (player == ColorStatus.BLACK_KING) {
+				result = result
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.WHITE
+								|| this.board[up][right] == ColorStatus.WHITE_KING)
+
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.WHITE
+								|| this.board[up][left] == ColorStatus.WHITE_KING)
+
+						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY
+								&& this.board[down][right] == ColorStatus.WHITE
+								|| this.board[down][right] == ColorStatus.WHITE_KING)
+
+						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY && this.board[down][left] == ColorStatus.WHITE
+								|| this.board[down][left] == ColorStatus.WHITE_KING);
+			}
+
+			if (player == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
+				result = result || this.board[downJ][rightJ] == ColorStatus.EMPTY
+						|| this.board[downJ][leftJ] == ColorStatus.EMPTY;
+			}
+
+		}
+		return result;
 	}
 
 	/*
 	 * Returns true if the index is outside of the boundaries of the game.
 	 */
-	private boolean checkBounds(int num1, int num2) {
-		return (num1 < 0 || num1 >= SIZE) || (num2 < 0 || num2 >= SIZE);
+	private boolean checkBounds(int num1) {
+		return (num1 < 0 || num1 >= SIZE);
 	}
 
 }
