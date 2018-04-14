@@ -83,11 +83,12 @@ public class CheckersPanel extends JPanel implements MouseListener {
 
 		this.highlightCheckers(g);
 		// hightlight available pieces
-		int posx, posy;
-		posx = 1;
-		posy = 2;
-		highlightSquare(g,posx,posy,Color.RED);
-		//System.out.println(board.canMove(ColorStatus.BLACK, posx, posy, posx - 1, posy + 1));
+		// int posx, posy;
+		// posx = 1;
+		// posy = 2;
+		// highlightSquare(g,posx,posy,Color.RED);
+		// System.out.println(board.canMove(ColorStatus.BLACK, posx, posy, posx - 1,
+		// posy + 1));
 
 		// highlightSquare(g);
 		// highlight legal moves
@@ -97,27 +98,19 @@ public class CheckersPanel extends JPanel implements MouseListener {
 	private void highlightCheckers(Graphics g) {
 		System.out.print(game.getCurrentPlayer().getName());
 
-		boolean[][] canMove = board.checkerCanBeSelected(game.getCurrentPlayer());
-		System.out.print("\n\n");
-		for(int i =0;i<Board.SIZE;i++) {
-			for(int j= 0; j<Board.SIZE;j++) {
-				System.out.print("["+j+","+i+"]: " + canMove[j][i] + " , ");
-			}
-			System.out.print("\n");
-		}
-		
-		
-		for (int i = 0; i < Board.SIZE; i++)
+		boolean[][] canMove = board.canSelect(game.getCurrentPlayer());
+
+		for (int i = 0; i < Board.SIZE; i++) {
 			for (int j = 0; j < Board.SIZE; j++) {
-				if (canMove[j][i]) {
+				if (canMove[i][j]) {
 					Color cy = Color.CYAN;
-					highlightSquare(g,i,j,cy);
+					highlightSquare(g, i, j, cy);
 				}
 			}
+		}
 
 	}
-	
-	
+
 	private void highlightSquare(Graphics g, int x, int y, Color c) {
 		g.setColor(new Color(c.getRed(), c.getBlue(), c.getGreen(), 100));
 		g.fillRect(boardX + x * tileSize, boardY + y * tileSize, tileSize, tileSize);
@@ -164,17 +157,23 @@ public class CheckersPanel extends JPanel implements MouseListener {
 				sy = j * tileSize + yI + tileSize / 2 + (fontSize / 3);
 				switch (checkerColor[i][j]) {
 				case WHITE_KING:
+					g.setColor(Color.WHITE);
+					g.fillOval(x, y, w, h);
 					g.setColor(Color.BLACK);
 					g.setFont(new Font("SansSerif", Font.BOLD, fontSize));
 					g.drawString("K", sx, sy);
+					break;
 				case WHITE:
 					g.setColor(Color.WHITE);
 					g.fillOval(x, y, w, h);
 					break;
 				case BLACK_KING:
+					g.setColor(Color.BLACK);
+					g.fillOval(x, y, w, h);
 					g.setColor(Color.WHITE);
 					g.setFont(new Font("SansSerif", Font.BOLD, fontSize));
 					g.drawString("K", sx, sy);
+					break;
 				case BLACK:
 					g.setColor(Color.BLACK);
 					g.fillOval(x, y, w, h);

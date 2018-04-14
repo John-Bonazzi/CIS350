@@ -31,9 +31,7 @@ public class Game {
 
 	}
 
-	private boolean isJump(int ir, int ic, int fr, int fc) {
-		return (ir - fr == 2 || ic - fc == 2);
-	}
+	
 
 	public ArrayList<Player> getPlayers() {
 		return players;
