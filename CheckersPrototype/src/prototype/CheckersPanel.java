@@ -22,7 +22,7 @@ import javax.swing.JPanel;
  */
 
 //This panel should be the same logic as the existing checkers game.
-public class CheckersPanel extends JPanel implements MouseListener {
+public class CheckersPanel extends JPanel {
 
 	private Dimension size;
 
@@ -36,7 +36,7 @@ public class CheckersPanel extends JPanel implements MouseListener {
 	private boolean[][] canMove;
 	private boolean[][] options;
 
-	Graphics g;
+	private Graphics g;
 
 	public CheckersPanel(int xSize, int ySize, Game g) {
 		size = new Dimension(xSize, ySize);
@@ -46,7 +46,7 @@ public class CheckersPanel extends JPanel implements MouseListener {
 		game = g;
 		board = new Board();
 		this.initBoard();
-		this.addMouseListener(this);
+		this.addMouseListener(new MListener());
 
 	}
 
@@ -100,12 +100,6 @@ public class CheckersPanel extends JPanel implements MouseListener {
 
 	}
 
-	// public void high() {
-	// this.highlightSquare(3,3,Color.RED);
-	// repaint();
-	// }
-	//
-
 	private void highlightCheckers() {
 		// System.out.print(game.getCurrentPlayer().getName());
 
@@ -122,7 +116,7 @@ public class CheckersPanel extends JPanel implements MouseListener {
 
 	}
 
-	private void highlight() {
+	public void highlight() {
 		System.out.println("highlight");
 
 		for (int c = 0; c < board.SIZE; c++) {
@@ -212,58 +206,52 @@ public class CheckersPanel extends JPanel implements MouseListener {
 
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
+	private class MListener implements MouseListener {
 
-	}
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			int mx, my;
+			mx = e.getX();
+			my = e.getY();
+			if (mx >= boardX && mx <= boardWidth + boardX) {
+				if (my >= boardY && my <= boardWidth + boardY) {
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+					int relX, relY;
 
-	}
+					relX = mx - boardX - 2; // loss of precision with integer conversion
+					relY = my - boardY - 2; // loss of precision with integer conversion
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		int mx, my;
-		mx = e.getX();
-		my = e.getY();
-		if (mx >= boardX && mx <= boardWidth + boardX) {
-			if (my >= boardY && my <= boardWidth + boardY) {
+					int tileX, tileY;
+					tileX = relX / tileSize;
+					tileY = relY / tileSize;
+					options = board.showOptions(game.getCurrentPlayer(), -1, -1);
 
-				int relX, relY;
+					if (canMove[tileX][tileY]) {
+						System.out.println("Can Move...");
+						options = board.showOptions(game.getCurrentPlayer(), tileY, tileX);
+						highlight();
 
-				relX = mx - boardX - 2; // loss of precision with integer conversion
-				relY = my - boardY - 2; // loss of precision with integer conversion
-
-				int tileX, tileY;
-				tileX = relX / tileSize;
-				tileY = relY / tileSize;
-				options = board.showOptions(game.getCurrentPlayer(), -1, -1);
-
-				if (canMove[tileX][tileY]) {
-					System.out.println("Can Move...");
-					options = board.showOptions(game.getCurrentPlayer(), tileY, tileX);
-					this.highlight();
-
-				} else {
+					}
 
 				}
-
 			}
 		}
-	}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		}
 
-	}
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
 
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
 	}
 
 }
