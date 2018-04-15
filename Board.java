@@ -1,29 +1,30 @@
 package prototype;
+
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Board extends Observable{
+public class Board extends Observable {
 	public static final int SIZE = 8;
 	private ColorStatus[][] board = new ColorStatus[SIZE][SIZE];
-	
+
 	public Board(Game game) {
 		this.addObserver(game);
 		Init();
 	}
 
 	private void Init() {
-		for (int c = 0; c < SIZE; c++) {
-			for (int r = 0; r < SIZE; r++) {
+		for (int r = 0; r < SIZE; r++) {
+			for (int c = 0; c < SIZE; c++) {
 				if (r % 2 != c % 2) {
-					if (c < 3)
-						board[r][c] = ColorStatus.BLACK;
-					else if (c > 4)
-						board[r][c] = ColorStatus.WHITE;
+					if (r < 3)
+						this.board[r][c] = ColorStatus.BLACK;
+					else if (r > 4)
+						this.board[r][c] = ColorStatus.WHITE;
 					else
-						board[r][c] = ColorStatus.EMPTY;
+						this.board[r][c] = ColorStatus.EMPTY;
 				} else
-					board[r][c] = ColorStatus.EMPTY;
+					this.board[r][c] = ColorStatus.EMPTY;
 			}
 		}
 	}
@@ -34,56 +35,68 @@ public class Board extends Observable{
 
 	public void move(Player player, int ir, int ic, int fr, int fc) {
 		ColorStatus temp = this.board[ir][ic];
+		System.out.println("BEFORE VALUE: " + this.board[ir][ic]);
 		this.board[ir][ic] = ColorStatus.EMPTY;
+		System.out.println("Initial coordinate: " + ir + " row " + ic + " col");
+		System.out.println("VALUE: " + this.board[ir][ic]);
+		System.out.println("VALUE BEFORE MOVE: " + this.board[fr][fc]);
+		if (fr == 0 && player.playerColor() == ColorStatus.WHITE) {
+			temp = ColorStatus.WHITE_KING;
+		} else if (fr == SIZE && player.playerColor() == ColorStatus.BLACK) {
+			temp = ColorStatus.BLACK_KING;
+		}
 		this.board[fr][fc] = temp;
+		System.out.println("Final coordinate: " + fr + " row " + fc + " col");
+		System.out.println("VALUE AFTER MOVE: " + this.board[fr][fc]);
 		if (Math.abs(ir - fr) == 2 && Math.abs(ic - fc) == 2) {
-			this.board[(ir + fr) / 2][(ir + ic) / 2] = ColorStatus.EMPTY;
-			if(checkBoard(player.playerColor(), player.kingColor())) {
-				setChanged();
-				notifyObservers();
-			}
+			int row = (ir + fr) / 2;
+			int col = (ic + fc) / 2;
+			System.out.println("IF");
+			System.out.println("middle coordinate: " + row + " row " + (ic + fc) / 2 + " col");
+			System.out.println("BEFORE JUMP VALUE: " + this.board[row][col]);
+
+			this.board[row][col] = ColorStatus.EMPTY;
+			System.out.println("middle coordinate: " + row + " row " + col + " col");
+			System.out.println("VALUE MIDDLE JUMP: " + this.board[row][col]);
+			/*
+			 * if(checkBoard(player.playerColor(), player.kingColor())) { setChanged();
+			 * notifyObservers(); }
+			 */
 		}
+		System.out.println("-----------------------------------------");
+		System.out.println("-----------------------------------------");
+		System.out.println("-----------------------------------------");
 	}
 
-	public int getValue(int posx, int posy) throws OutOfBoundsException {
+	public ColorStatus getColor(int row, int col) {
+		if (checkBounds(row) || checkBounds(col))
+			return ColorStatus.EMPTY;
 
-		if (checkBounds(posx) || checkBounds(posy))
-			throw new OutOfBoundsException();
-
-		ColorStatus status = getColor(posx, posy);
-		switch (status) {
-		case EMPTY:
-			return 0;
-		case WHITE:
-			return 1;
-		case WHITE_KING:
-			return 2;
-		case BLACK:
-			return 3;
-		case BLACK_KING:
-			return 4;
-		default:
-			return -1;
-		}
+		return this.board[row][col];
 	}
-
-	public ColorStatus getColor(int posx, int posy) throws OutOfBoundsException {
-		if (checkBounds(posx) || checkBounds(posy))
-			throw new OutOfBoundsException();
-
-		return this.board[posx][posy];
-	}
-
-	// FIXME: make a getLegalJumpsFrom
 
 	public boolean[][] canSelect(Player player) {
 		ColorStatus playerColor = player.playerColor();
 		ColorStatus checkerKing = player.kingColor();
 		boolean[][] boardColor = new boolean[SIZE][SIZE];
+		boolean canJump = false;
 		for (int row = 0; row < SIZE; row++) {
 			for (int col = 0; col < SIZE; col++) {
 				boardColor[row][col] = false;
 			}
+		}
+
+		for (int row = 0; row < SIZE; row++) {
+			for (int col = 0; col < SIZE; col++) {
+				if (canJump(playerColor, checkerKing, row, col)) {
+					boardColor[row][col] = true;
+					canJump = true;
+				}
+			}
+		}
+
+		if (canJump) {
+			return boardColor;
 		}
 
 		for (int row = 0; row < SIZE; row++) {
@@ -94,20 +107,6 @@ public class Board extends Observable{
 			}
 		}
 
-		// for (int i = 0; i < SIZE; i++) {
-		// for (int j = 0; j < SIZE; j++) {
-		//
-		// if (playerColor == ColorStatus.WHITE || playerColor == checkerKing) {
-		// boardColor[j][i] = this.canMove(playerColor, i, j, i + 1, j - 1)
-		// || this.canMove(playerColor, i, j, i - 1, j - 1);
-		// }
-		// if (playerColor == ColorStatus.BLACK || playerColor == checkerKing) {
-		// boardColor[j][i] = this.canMove(playerColor, i, j, i - 1, j + 1)
-		// || this.canMove(playerColor, i, j, i + 1, j - 1);
-		// }
-		//
-		// }
-		// }
 		return boardColor;
 	}
 
@@ -116,7 +115,7 @@ public class Board extends Observable{
 		if (checkBounds(fr) || checkBounds(fc)) {
 			return false;
 		}
-		return board[fr][fc] == ColorStatus.EMPTY;
+		return this.board[fr][fc] == ColorStatus.EMPTY;
 	}
 
 	public boolean canMove(ColorStatus player, ColorStatus king, int r, int c) {
@@ -140,7 +139,7 @@ public class Board extends Observable{
 			if (player == ColorStatus.WHITE || king == ColorStatus.BLACK_KING || king == ColorStatus.WHITE_KING)
 				result = result || this.board[up][right] == ColorStatus.EMPTY
 						|| this.board[up][left] == ColorStatus.EMPTY;
-			if (player == ColorStatus.BLACK ||  king == ColorStatus.BLACK_KING || king == ColorStatus.WHITE_KING) {
+			if (player == ColorStatus.BLACK || king == ColorStatus.BLACK_KING || king == ColorStatus.WHITE_KING) {
 				result = result || this.board[down][right] == ColorStatus.EMPTY
 						|| this.board[down][left] == ColorStatus.EMPTY;
 			}
@@ -166,7 +165,8 @@ public class Board extends Observable{
 
 		if (canJump(allyChecker, allyKing, row, col)) {
 
-			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
+					|| checker == ColorStatus.WHITE_KING) {
 				if (canJump(allyChecker, allyKing, row, col, row - 2, col + 2)) {
 					result[row - 2][col + 2] = true;
 				}
@@ -174,7 +174,8 @@ public class Board extends Observable{
 					result[row - 2][col - 2] = true;
 				}
 			}
-			if (checker == ColorStatus.BLACK ||  checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING
+					|| checker == ColorStatus.WHITE_KING) {
 				if (canJump(allyChecker, allyKing, row, col, row + 2, col + 2)) {
 					result[row + 2][col + 2] = true;
 				}
@@ -182,10 +183,10 @@ public class Board extends Observable{
 					result[row + 2][col - 2] = true;
 				}
 			}
-		} 
-		else {
+		} else {
 
-			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
+					|| checker == ColorStatus.WHITE_KING) {
 				if (canMove(row - 1, col + 1)) {
 					result[row - 1][col + 1] = true;
 				}
@@ -193,7 +194,8 @@ public class Board extends Observable{
 					result[row - 1][col - 1] = true;
 				}
 			}
-			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING
+					|| checker == ColorStatus.WHITE_KING) {
 				if (canMove(row + 1, col + 1)) {
 					result[row + 1][col + 1] = true;
 				}

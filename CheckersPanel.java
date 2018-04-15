@@ -97,11 +97,11 @@ public class CheckersPanel extends JPanel {
 	private void highlightCheckers(boolean[][] brd) {
 		// System.out.print(game.getCurrentPlayer().getName());
 
-		for (int i = 0; i < Board.SIZE; i++) {
-			for (int j = 0; j < Board.SIZE; j++) {
-				if (brd[i][j]) {
+		for (int row = 0; row < Board.SIZE; row++) {
+			for (int col = 0; col < Board.SIZE; col++) {
+				if (brd[row][col]) {
 					Color cy = Color.CYAN;
-					highlightSquare(i, j, cy);
+					highlightSquare(col, row, cy);
 				}
 			}
 		}
@@ -146,13 +146,13 @@ public class CheckersPanel extends JPanel {
 
 		int fontSize = 30;
 
-		for (int i = 0; i < Board.SIZE; i++) {
-			for (int j = 0; j < Board.SIZE; j++) {
-				x = i * tileSize + xI + (tileSize - w) / 2;
-				y = j * tileSize + yI + (tileSize - h) / 2;
-				sx = i * tileSize + xI + tileSize / 2 - (fontSize / 3);
-				sy = j * tileSize + yI + tileSize / 2 + (fontSize / 3);
-				switch (checkerColor[i][j]) {
+		for (int row = 0; row < Board.SIZE; row++) {
+			for (int col = 0; col < Board.SIZE; col++) {
+				y = row * tileSize + yI + (tileSize - w) / 2;
+				x = col * tileSize + xI + (tileSize - h) / 2;
+				sx = row * tileSize + yI + (tileSize / 2) - (fontSize / 3);
+				sy = col * tileSize + xI + (tileSize / 2) + (fontSize / 3);
+				switch (checkerColor[row][col]) {
 				case WHITE_KING:
 					g.setColor(Color.WHITE);
 					g.fillOval(x, y, w, h);
@@ -176,6 +176,8 @@ public class CheckersPanel extends JPanel {
 					g.fillOval(x, y, w, h);
 					break;
 				case EMPTY:
+					g.setColor(Color.RED);
+					g.fillRect(x, y, w, h);
 					break;
 				}
 			}
@@ -206,8 +208,8 @@ public class CheckersPanel extends JPanel {
 	private class MListener implements MouseListener {
 
 		private boolean first = true;
-		private int originalX;
-		private int originalY;
+		private int originalRow;
+		private int originalCol;
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
@@ -222,26 +224,25 @@ public class CheckersPanel extends JPanel {
 					relX = mx - boardX - 2; // loss of precision with integer conversion
 					relY = my - boardY - 2; // loss of precision with integer conversion
 
-					int tileX, tileY;
-					tileX = relX / tileSize;
-					tileY = relY / tileSize;
+					int col, row;
+					col = relX / tileSize;
+					row = relY / tileSize;
 					// options = canMove; // set to null because it checks for it in paintComponent.
 					// board.showOptions(game.getCurrentPlayer(), -1, -1); //sets all to false
-
-					if (options[tileY][tileX] && first) {
-						this.originalX = tileX;
-						this.originalY = tileY;
-						options = board.showOptions(game.getCurrentPlayer(), tileY, tileX);
+					System.out.println("SELECTED VALUE: " + checkerColor[row][col]);
+					if (options[row][col] && first) {
+						this.originalRow = row;
+						this.originalCol = col;
+						options = board.showOptions(game.getCurrentPlayer(), row, col);
 						this.first = false;
 						repaint();
-					} else if (!first && options[tileY][tileX]) {
-						if (tileX == this.originalX && tileY == this.originalY) {
+					} else if (!first && options[row][col]) {
+						if (col == this.originalCol && row == this.originalRow) {
 							this.first = true;
 							options = canMove;
 							repaint();
-						}
-						else {
-							board.move(game.getCurrentPlayer(), this.originalY , this.originalX, tileY, tileX);
+						} else {
+							board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row, col);
 							game.nextPlayer();
 							canMove = board.canSelect(game.getCurrentPlayer());
 							options = canMove;
@@ -249,7 +250,6 @@ public class CheckersPanel extends JPanel {
 							repaint();
 						}
 					}
-					 // FIXME: move it.
 				}
 			}
 		}
