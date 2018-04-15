@@ -150,8 +150,8 @@ public class CheckersPanel extends JPanel {
 			for (int col = 0; col < Board.SIZE; col++) {
 				y = row * tileSize + yI + (tileSize - w) / 2;
 				x = col * tileSize + xI + (tileSize - h) / 2;
-				sx = row * tileSize + yI + (tileSize / 2) - (fontSize / 3);
-				sy = col * tileSize + xI + (tileSize / 2) + (fontSize / 3);
+				sy = row * tileSize + xI + (tileSize / 2) - (fontSize / 3);
+				sx = col * tileSize + yI + (tileSize / 2) + (fontSize / 3);
 				switch (checkerColor[row][col]) {
 				case WHITE_KING:
 					g.setColor(Color.WHITE);
