@@ -1,10 +1,14 @@
 package prototype;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
-public class Board {
+public class Board extends Observable{
 	public static final int SIZE = 8;
 	private ColorStatus[][] board = new ColorStatus[SIZE][SIZE];
-
-	public Board() {
+	
+	public Board(Game game) {
+		this.addObserver(game);
 		Init();
 	}
 
@@ -26,6 +30,19 @@ public class Board {
 
 	public ColorStatus[][] getBoard() {
 		return this.board;
+	}
+
+	public void move(Player player, int ir, int ic, int fr, int fc, boolean isJump) {
+		ColorStatus temp = this.board[ir][ic];
+		this.board[ir][ic] = ColorStatus.EMPTY;
+		this.board[fr][fc] = temp;
+		if (isJump) {
+			this.board[(ir + fr) / 2][(ir + ic) / 2] = ColorStatus.EMPTY;
+			if(checkBoard(player.playerColor(), player.kingColor())) {
+				setChanged();
+				notifyObservers();
+			}
+		}
 	}
 
 	public int getValue(int posx, int posy) throws OutOfBoundsException {
@@ -94,6 +111,14 @@ public class Board {
 		return boardColor;
 	}
 
+	public boolean canMove(int fr, int fc) {
+
+		if (checkBounds(fr) || checkBounds(fc)) {
+			return false;
+		}
+		return board[fr][fc] == ColorStatus.EMPTY;
+	}
+
 	public boolean canMove(ColorStatus player, ColorStatus king, int r, int c) {
 		int up, down, left, right;
 		up = r - 1;
@@ -124,24 +149,76 @@ public class Board {
 	}
 
 	public boolean[][] showOptions(Player player, int row, int col) {
-		ColorStatus color = player.playerColor();
+		ColorStatus checker = player.playerColor();
 		ColorStatus king = player.kingColor();
 		boolean[][] result = new boolean[SIZE][SIZE];
-		
-		for(int r = 0; r < SIZE; r++) {
-			for(int c = 0; c < SIZE; c++) {
+
+		for (int r = 0; r < SIZE; r++) {
+			for (int c = 0; c < SIZE; c++) {
 				result[r][c] = false;
 			}
 		}
-		if(row == -1 && col == -1) {
+		if (row == -1 && col == -1) {
 			return result;
 		}
-		
-		if(canJump(color, king, row, col)) {
-			
+		result[row][col] = true;
+
+		if (canJump(checker, king, row, col)) {
+
+			if (checker == ColorStatus.WHITE || king == ColorStatus.BLACK_KING) {
+				if (canJump(checker, king, row, col, row - 2, col + 2)) {
+					result[row - 2][col + 2] = true;
+				}
+				if (canJump(checker, king, row, col, row - 2, col - 2)) {
+					result[row - 2][col - 2] = true;
+				}
+			}
+			if (checker == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
+				if (canJump(checker, king, row, col, row + 2, col + 2)) {
+					result[row + 2][col + 2] = true;
+				}
+				if (canJump(checker, king, row, col, row + 2, col - 2)) {
+					result[row + 2][col - 2] = true;
+				}
+			}
+		} else {
+
+			if (checker == ColorStatus.WHITE || king == ColorStatus.BLACK_KING) {
+				if (canMove(row - 1, col + 1)) {
+					result[row - 1][col + 1] = true;
+				}
+				if (canMove(row - 1, col - 1)) {
+					result[row - 1][col - 1] = true;
+				}
+			}
+			if (checker == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
+				if (canMove(row + 1, col + 1)) {
+					result[row + 1][col + 1] = true;
+				}
+				if (canMove(row + 1, col - 1)) {
+					result[row + 1][col - 1] = true;
+				}
+			}
+
 		}
-			
-		
+
+		return result;
+	}
+
+	private boolean canJump(ColorStatus player, ColorStatus king, int ir, int ic, int fr, int fc) {
+
+		if (checkBounds(fr) || checkBounds(fc)) {
+			return false;
+		}
+
+		if (this.board[fr][fc] != ColorStatus.EMPTY)
+			return false;
+
+		int mr, mc;
+		mr = (fr + ir) / 2;
+		mc = (fc + ic) / 2;
+
+		return this.board[mr][mc] != player && this.board[mr][mc] != king && this.board[mr][mc] != ColorStatus.EMPTY;
 	}
 
 	private boolean canJump(ColorStatus player, ColorStatus king, int r, int c) {
@@ -178,15 +255,14 @@ public class Board {
 		boolean result = false;
 		ColorStatus enemyChecker;
 		ColorStatus enemyKing;
-		if(player == ColorStatus.BLACK) {
+		if (player == ColorStatus.BLACK) {
 			enemyChecker = ColorStatus.WHITE;
 			enemyKing = ColorStatus.WHITE_KING;
-		}
-		else {
+		} else {
 			enemyChecker = ColorStatus.BLACK;
 			enemyKing = ColorStatus.BLACK_KING;
 		}
-		
+
 		if (this.board[r][c] == player || this.board[r][c] == king) {
 			if (player == ColorStatus.WHITE || king == ColorStatus.BLACK_KING) {
 				result = result
@@ -208,6 +284,17 @@ public class Board {
 
 		}
 		return result;
+	}
+
+	private boolean checkBoard(ColorStatus checker, ColorStatus king) {
+		for (int r = 0; r < SIZE; r++) {
+			for (ColorStatus c : this.board[r]) {
+				if (c != checker || c != king || c != ColorStatus.EMPTY) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/*
