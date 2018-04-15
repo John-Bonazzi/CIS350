@@ -1,30 +1,24 @@
 package prototype;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
-/*
- * 
- * Write a method that highlights a square based on a boolean 2d array.
- * 
- * add buttons and text fields.
- * 
- * 
- */
-
 //This panel should be the same logic as the existing checkers game.
 public class CheckersPanel extends JPanel {
 
 	private Dimension size;
+
+	public void setSize(Dimension size) {
+		this.size = size;
+		initBoard();
+		repaint();
+	}
 
 	private final float PERCENTAGE = (float) 0.75;
 	private Board board;
@@ -57,8 +51,10 @@ public class CheckersPanel extends JPanel {
 		boardX = (int) (centerX - (centerX * PERCENTAGE));
 		boardY = (int) (centerY - (centerY * PERCENTAGE));
 
-		boardWidth = (int) (size.width * PERCENTAGE);
-		boardHeight = (int) (size.height * PERCENTAGE);
+		double widOrHei = Math.min(size.width, size.height);
+
+		boardWidth = (int) (widOrHei * PERCENTAGE);
+		boardHeight = (int) (widOrHei * PERCENTAGE);
 
 		tileSize = boardWidth / Board.SIZE;
 	}
@@ -71,14 +67,14 @@ public class CheckersPanel extends JPanel {
 		g.setColor(Color.BLACK);
 		g.drawRect(boardX, boardY, boardWidth + 1, boardWidth + 1);
 
-		// Draw the initail Board
+		// Draw the initial Board
 		this.paintBoard(boardX, boardY, boardWidth, boardHeight); // ts is the tile size.
 		// Draw pieces
 		this.paintPieces(boardX, boardY, boardWidth, boardHeight);
 
 		this.highlightCheckers();
 
-		// hightlight available pieces
+		// Highlight available pieces
 		if (this.options != null)
 			this.highlightMove();
 		else
@@ -106,23 +102,17 @@ public class CheckersPanel extends JPanel {
 	}
 
 	public void highlightMove() {
-		// System.out.println("highlight");
-
-		for (int c = 0; c < board.SIZE; c++) {
+		for (int c = 0; c < Board.SIZE; c++) {
 			System.out.println();
-			for (int r = 0; r < board.SIZE; r++) {
-				
+			for (int r = 0; r < Board.SIZE; r++) {
 				if (options[r][c]) {
-					System.out.print("["+r + "," + c + "]\t");
-
+					// System.out.print("[" + r + "," + c + "]\t");
 					this.highlightSquare(r, c, Color.RED);
 				}
-				else
-					System.out.print(r + "," + c + "\t");
+				// System.out.print(r + "," + c + "\t");
 			}
 		}
-		// System.out.println("HIGHLIGHTING: " + x + "," + y);
-		// highlightSquare(x, y, Color.BLACK);
+
 	}
 
 	private void highlightSquare(int x, int y, Color c) {
@@ -192,12 +182,16 @@ public class CheckersPanel extends JPanel {
 					g.setColor(Color.BLACK);
 					g.fillOval(x, y, w, h);
 					break;
-
+				case EMPTY:
+					break;
 				}
 			}
 		}
 	}
 
+	/*
+	 * prints out misc. debug information.
+	 */
 	public void paintDebug() {
 		g.setColor(Color.RED);
 		g.fillRect(0, 0, (int) size.getWidth(), (int) size.getHeight());
@@ -214,7 +208,6 @@ public class CheckersPanel extends JPanel {
 		posy = 2;
 		highlightSquare(posx, posy, Color.RED);
 		System.out.println(board.canMove(ColorStatus.BLACK, ColorStatus.BLACK_KING, posx, posy));
-		// g.fillOval(centerX, centerY, 10, 10);
 	}
 
 	private class MListener implements MouseListener {
@@ -235,8 +228,8 @@ public class CheckersPanel extends JPanel {
 					int tileX, tileY;
 					tileX = relX / tileSize;
 					tileY = relY / tileSize;
-					options = null;
-					// board.showOptions(game.getCurrentPlayer(), -1, -1);
+					options = null; // set to null because it checks for it in paintComponent.
+					// board.showOptions(game.getCurrentPlayer(), -1, -1); //sets all to false
 
 					if (canMove[tileX][tileY]) {
 						options = board.showOptions(game.getCurrentPlayer(), tileX, tileY);
