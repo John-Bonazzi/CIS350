@@ -105,6 +105,15 @@ public class Game implements Observer {
 				return p;
 		return null;
 	}
+	
+	public void nextPlayer() {
+		if(this.currentPlayer == ColorStatus.WHITE) {
+			this.currentPlayer = ColorStatus.BLACK;
+		}
+		else if(this.currentPlayer == ColorStatus.BLACK) {
+			this.currentPlayer = ColorStatus.WHITE;
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {

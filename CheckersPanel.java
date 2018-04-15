@@ -37,11 +37,12 @@ public class CheckersPanel extends JPanel {
 		this.setPreferredSize(size);
 
 		// this.setBackground(Color.RED);
-		game = g;
-		board = new Board();
+		this.game = g;
+		this.board = new Board(this.game);
 		this.initBoard();
 		this.addMouseListener(new MListener());
-
+		canMove = board.canSelect(game.getCurrentPlayer());
+		options = canMove;
 	}
 
 	private void initBoard() {
@@ -64,52 +65,44 @@ public class CheckersPanel extends JPanel {
 
 		g.setColor(Color.RED);
 
-		g.setColor(Color.BLACK);
-		g.drawRect(boardX, boardY, boardWidth + 1, boardWidth + 1);
+		// g.setColor(Color.BLACK);
+		// g.drawRect(boardX, boardY, boardWidth + 1, boardWidth + 1);
 
 		// Draw the initial Board
 		this.paintBoard(boardX, boardY, boardWidth, boardHeight); // ts is the tile size.
 		// Draw pieces
 		this.paintPieces(boardX, boardY, boardWidth, boardHeight);
 
-		this.highlightCheckers();
+		// Make the board of checkers that can move
+		// canMove = board.canSelect(game.getCurrentPlayer());
 
 		// Highlight available pieces
-		if (this.options != null)
-			this.highlightMove();
-		else
-			System.out.println("Please Select a Checker.");// Change this to a JLabel output.
+
+		this.highlightCheckers(options);
+
+		/*
+		 * if (this.options != null) this.highlightCheckers(options); else
+		 * this.highlightCheckers(canMove);
+		 */
+		/*
+		 * else System.out.println("Please Select a Checker.");// Change this to a
+		 * JLabel output.
+		 */
 
 		// highlightSquare(g);
 		// highlight legal moves
 
 	}
 
-	private void highlightCheckers() {
+	private void highlightCheckers(boolean[][] brd) {
 		// System.out.print(game.getCurrentPlayer().getName());
-
-		canMove = board.canSelect(game.getCurrentPlayer());
 
 		for (int i = 0; i < Board.SIZE; i++) {
 			for (int j = 0; j < Board.SIZE; j++) {
-				if (canMove[i][j]) {
+				if (brd[i][j]) {
 					Color cy = Color.CYAN;
 					highlightSquare(i, j, cy);
 				}
-			}
-		}
-
-	}
-
-	public void highlightMove() {
-		for (int c = 0; c < Board.SIZE; c++) {
-			System.out.println();
-			for (int r = 0; r < Board.SIZE; r++) {
-				if (options[r][c]) {
-					// System.out.print("[" + r + "," + c + "]\t");
-					this.highlightSquare(r, c, Color.RED);
-				}
-				// System.out.print(r + "," + c + "\t");
 			}
 		}
 
@@ -212,6 +205,10 @@ public class CheckersPanel extends JPanel {
 
 	private class MListener implements MouseListener {
 
+		private boolean first = true;
+		private int originalX;
+		private int originalY;
+
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			int mx, my;
@@ -228,14 +225,31 @@ public class CheckersPanel extends JPanel {
 					int tileX, tileY;
 					tileX = relX / tileSize;
 					tileY = relY / tileSize;
-					options = null; // set to null because it checks for it in paintComponent.
+					// options = canMove; // set to null because it checks for it in paintComponent.
 					// board.showOptions(game.getCurrentPlayer(), -1, -1); //sets all to false
 
-					if (canMove[tileX][tileY]) {
-						options = board.showOptions(game.getCurrentPlayer(), tileX, tileY);
+					if (options[tileY][tileX] && first) {
+						this.originalX = tileX;
+						this.originalY = tileY;
+						options = board.showOptions(game.getCurrentPlayer(), tileY, tileX);
+						this.first = false;
 						repaint();
+					} else if (!first && options[tileY][tileX]) {
+						if (tileX == this.originalX && tileY == this.originalY) {
+							this.first = true;
+							options = canMove;
+							repaint();
+						}
+						else {
+							board.move(game.getCurrentPlayer(), this.originalY , this.originalX, tileY, tileX);
+							game.nextPlayer();
+							canMove = board.canSelect(game.getCurrentPlayer());
+							options = canMove;
+							first = true;
+							repaint();
+						}
 					}
-
+					 // FIXME: move it.
 				}
 			}
 		}
