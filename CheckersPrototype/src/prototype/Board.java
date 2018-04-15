@@ -61,12 +61,7 @@ public class Board {
 
 	public boolean[][] canSelect(Player player) {
 		ColorStatus playerColor = player.playerColor();
-		ColorStatus checkerKing = ColorStatus.EMPTY;
-		if (playerColor == ColorStatus.WHITE) {
-			checkerKing = ColorStatus.WHITE_KING;
-		} else if (playerColor == ColorStatus.BLACK) {
-			checkerKing = ColorStatus.BLACK_KING;
-		}
+		ColorStatus checkerKing = player.kingColor();
 		boolean[][] boardColor = new boolean[SIZE][SIZE];
 		for (int row = 0; row < SIZE; row++) {
 			for (int col = 0; col < SIZE; col++) {
@@ -99,6 +94,14 @@ public class Board {
 		return boardColor;
 	}
 
+	public boolean canMove(int fr, int fc) {
+
+		if (checkBounds(fr) || checkBounds(fc)) {
+			return false;
+		}
+		return board[fr][fc] == ColorStatus.EMPTY;
+	}
+
 	public boolean canMove(ColorStatus player, ColorStatus king, int r, int c) {
 		int up, down, left, right;
 		up = r - 1;
@@ -128,8 +131,77 @@ public class Board {
 		return result;
 	}
 
-	private boolean isJump(int ir, int ic, int fr, int fc) {
-		return (ir - fr == 2 || ic - fc == 2);
+	public boolean[][] showOptions(Player player, int row, int col) {
+		ColorStatus checker = player.playerColor();
+		ColorStatus king = player.kingColor();
+		boolean[][] result = new boolean[SIZE][SIZE];
+
+		for (int r = 0; r < SIZE; r++) {
+			for (int c = 0; c < SIZE; c++) {
+				result[r][c] = false;
+			}
+		}
+		if (row == -1 && col == -1) {
+			return result;
+		}
+		result[row][col] = true;
+
+		if (canJump(checker, king, row, col)) {
+
+			if (checker == ColorStatus.WHITE || king == ColorStatus.BLACK_KING) {
+				if (canJump(checker, king, row, col, row - 2, col + 2)) {
+					result[row - 2][col + 2] = true;
+				}
+				if (canJump(checker, king, row, col, row - 2, col - 2)) {
+					result[row - 2][col - 2] = true;
+				}
+			}
+			if (checker == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
+				if (canJump(checker, king, row, col, row + 2, col + 2)) {
+					result[row + 2][col + 2] = true;
+				}
+				if (canJump(checker, king, row, col, row + 2, col - 2)) {
+					result[row + 2][col - 2] = true;
+				}
+			}
+		} else {
+
+			if (checker == ColorStatus.WHITE || king == ColorStatus.BLACK_KING) {
+				if (canMove(row - 1, col + 1)) {
+					result[row - 1][col + 1] = true;
+				}
+				if (canMove(row - 1, col - 1)) {
+					result[row - 1][col - 1] = true;
+				}
+			}
+			if (checker == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
+				if (canMove(row + 1, col + 1)) {
+					result[row + 1][col + 1] = true;
+				}
+				if (canMove(row + 1, col - 1)) {
+					result[row + 1][col - 1] = true;
+				}
+			}
+
+		}
+
+		return result;
+	}
+
+	private boolean canJump(ColorStatus player, ColorStatus king, int ir, int ic, int fr, int fc) {
+
+		if (checkBounds(fr) || checkBounds(fc)) {
+			return false;
+		}
+
+		if (this.board[fr][fc] != ColorStatus.EMPTY)
+			return false;
+
+		int mr, mc;
+		mr = (fr + ir) / 2;
+		mc = (fc + ic) / 2;
+
+		return this.board[mr][mc] != player && this.board[mr][mc] != king && this.board[mr][mc] != ColorStatus.EMPTY;
 	}
 
 	private boolean canJump(ColorStatus player, ColorStatus king, int r, int c) {
@@ -164,60 +236,33 @@ public class Board {
 		}
 
 		boolean result = false;
+		ColorStatus enemyChecker;
+		ColorStatus enemyKing;
+		if (player == ColorStatus.BLACK) {
+			enemyChecker = ColorStatus.WHITE;
+			enemyKing = ColorStatus.WHITE_KING;
+		} else {
+			enemyChecker = ColorStatus.BLACK;
+			enemyKing = ColorStatus.BLACK_KING;
+		}
+
 		if (this.board[r][c] == player || this.board[r][c] == king) {
-			if (player == ColorStatus.WHITE) {
+			if (player == ColorStatus.WHITE || king == ColorStatus.BLACK_KING) {
 				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.BLACK
-								|| this.board[up][right] == ColorStatus.BLACK_KING)
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == enemyChecker
+								|| this.board[up][right] == enemyKing)
 
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.BLACK
-								|| this.board[up][left] == ColorStatus.BLACK_KING);
-			}
-
-			if (player == ColorStatus.BLACK) {
-				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.WHITE
-								|| this.board[up][right] == ColorStatus.WHITE_KING)
-
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.WHITE
-								|| this.board[up][left] == ColorStatus.WHITE_KING);
-			}
-
-			if (player == ColorStatus.WHITE_KING) {
-				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.BLACK
-								|| this.board[up][right] == ColorStatus.BLACK_KING)
-
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.BLACK
-								|| this.board[up][left] == ColorStatus.BLACK_KING)
-
-						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY
-								&& this.board[down][right] == ColorStatus.BLACK
-								|| this.board[down][right] == ColorStatus.BLACK_KING)
-
-						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY && this.board[down][left] == ColorStatus.BLACK
-								|| this.board[down][left] == ColorStatus.BLACK_KING);
-			}
-
-			if (player == ColorStatus.BLACK_KING) {
-				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == ColorStatus.WHITE
-								|| this.board[up][right] == ColorStatus.WHITE_KING)
-
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == ColorStatus.WHITE
-								|| this.board[up][left] == ColorStatus.WHITE_KING)
-
-						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY
-								&& this.board[down][right] == ColorStatus.WHITE
-								|| this.board[down][right] == ColorStatus.WHITE_KING)
-
-						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY && this.board[down][left] == ColorStatus.WHITE
-								|| this.board[down][left] == ColorStatus.WHITE_KING);
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == enemyChecker
+								|| this.board[up][left] == enemyKing);
 			}
 
 			if (player == ColorStatus.BLACK || king == ColorStatus.WHITE_KING) {
-				result = result || this.board[downJ][rightJ] == ColorStatus.EMPTY
-						|| this.board[downJ][leftJ] == ColorStatus.EMPTY;
+				result = result
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && this.board[up][right] == enemyChecker
+								|| this.board[up][right] == enemyKing)
+
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && this.board[up][left] == enemyChecker
+								|| this.board[up][left] == enemyKing);
 			}
 
 		}

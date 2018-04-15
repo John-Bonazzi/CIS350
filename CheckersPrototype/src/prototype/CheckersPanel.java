@@ -22,7 +22,7 @@ import javax.swing.JPanel;
  */
 
 //This panel should be the same logic as the existing checkers game.
-public class CheckersPanel extends JPanel implements MouseListener {
+public class CheckersPanel extends JPanel {
 
 	private Dimension size;
 
@@ -33,6 +33,10 @@ public class CheckersPanel extends JPanel implements MouseListener {
 	private int boardX, boardY;
 	private int boardWidth, boardHeight;
 	private int tileSize;
+	private boolean[][] canMove;
+	private boolean[][] options;
+
+	private Graphics g;
 
 	public CheckersPanel(int xSize, int ySize, Game g) {
 		size = new Dimension(xSize, ySize);
@@ -42,7 +46,7 @@ public class CheckersPanel extends JPanel implements MouseListener {
 		game = g;
 		board = new Board();
 		this.initBoard();
-		this.addMouseListener(this);
+		this.addMouseListener(new MListener());
 
 	}
 
@@ -59,64 +63,74 @@ public class CheckersPanel extends JPanel implements MouseListener {
 		tileSize = boardWidth / Board.SIZE;
 	}
 
-	public void paintComponent(Graphics g) {
-		// g.setColor(Color.RED);
-		// g.fillRect(0,0,(int)size.getWidth(),(int)size.getHeight());
+	public void paintComponent(Graphics graph) {
+		g = graph;
+
 		g.setColor(Color.RED);
 
-		// g.fillRect(0, 0, size.width, size.height);
-
-		// g.drawLine(boardX, 0, boardX, size.height);
-		// g.drawLine(boardWidth + boardX, 0, boardWidth + boardX, size.height);
-		//
-		// g.drawLine(0, boardY, size.width, boardY);
-		// g.drawLine(0, boardHeight + boardY, size.width, boardHeight + boardY);
-
-		// g.fillOval(centerX, centerY, 10, 10);
 		g.setColor(Color.BLACK);
 		g.drawRect(boardX, boardY, boardWidth + 1, boardWidth + 1);
 
 		// Draw the initail Board
-		this.paintBoard(g, boardX, boardY, boardWidth, boardHeight); // ts is the tile size.
+		this.paintBoard(boardX, boardY, boardWidth, boardHeight); // ts is the tile size.
 		// Draw pieces
-		this.paintPieces(g, boardX, boardY, boardWidth, boardHeight);
+		this.paintPieces(boardX, boardY, boardWidth, boardHeight);
 
-		this.highlightCheckers(g);
+		this.highlightCheckers();
+
 		// hightlight available pieces
-		// int posx, posy;
-		// posx = 1;
-		// posy = 2;
-		// highlightSquare(g,posx,posy,Color.RED);
-		// System.out.println(board.canMove(ColorStatus.BLACK, posx, posy, posx - 1,
-		// posy + 1));
+		if (this.options != null)
+			this.highlightMove();
+		else
+			System.out.println("Please Select a Checker.");// Change this to a JLabel output.
 
 		// highlightSquare(g);
 		// highlight legal moves
 
 	}
 
-	private void highlightCheckers(Graphics g) {
-		System.out.print(game.getCurrentPlayer().getName());
+	private void highlightCheckers() {
+		// System.out.print(game.getCurrentPlayer().getName());
 
-		boolean[][] canMove = board.canSelect(game.getCurrentPlayer());
+		canMove = board.canSelect(game.getCurrentPlayer());
 
 		for (int i = 0; i < Board.SIZE; i++) {
 			for (int j = 0; j < Board.SIZE; j++) {
 				if (canMove[i][j]) {
 					Color cy = Color.CYAN;
-					highlightSquare(g, i, j, cy);
+					highlightSquare(i, j, cy);
 				}
 			}
 		}
 
 	}
 
-	private void highlightSquare(Graphics g, int x, int y, Color c) {
-		g.setColor(new Color(c.getRed(), c.getBlue(), c.getGreen(), 100));
-		g.fillRect(boardX + x * tileSize, boardY + y * tileSize, tileSize, tileSize);
+	public void highlightMove() {
+		// System.out.println("highlight");
+
+		for (int c = 0; c < board.SIZE; c++) {
+			System.out.println();
+			for (int r = 0; r < board.SIZE; r++) {
+				
+				if (options[r][c]) {
+					System.out.print("["+r + "," + c + "]\t");
+
+					this.highlightSquare(r, c, Color.RED);
+				}
+				else
+					System.out.print(r + "," + c + "\t");
+			}
+		}
+		// System.out.println("HIGHLIGHTING: " + x + "," + y);
+		// highlightSquare(x, y, Color.BLACK);
 	}
 
-	private void paintBoard(Graphics g, int xI, int yI, int wid, int hei) {
+	private void highlightSquare(int x, int y, Color c) {
+		this.g.setColor(new Color(c.getRed(), c.getBlue(), c.getGreen(), 100));
+		this.g.fillRect(boardX + x * tileSize, boardY + y * tileSize, tileSize, tileSize);
+	}
+
+	private void paintBoard(int xI, int yI, int wid, int hei) {
 		/*
 		 * board Colors f0f1ff 1 square color aab1e6 2 square color 000000 white piece
 		 * ffffff black piece
@@ -139,7 +153,7 @@ public class CheckersPanel extends JPanel implements MouseListener {
 		}
 	}
 
-	private void paintPieces(Graphics g, int xI, int yI, int wid, int hei) {
+	private void paintPieces(int xI, int yI, int wid, int hei) {
 
 		checkerColor = board.getBoard();
 		int x, y, w, h;
@@ -180,57 +194,74 @@ public class CheckersPanel extends JPanel implements MouseListener {
 					break;
 
 				}
-
-			}
-		}
-
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		int mx, my;
-		mx = e.getX();
-		my = e.getY();
-
-		if (mx >= boardX && mx <= boardWidth + boardX) {
-			if (my >= boardY && my <= boardWidth + boardY) {
-
-				int relX, relY;
-
-				relX = mx - boardX - 2; // loss of precision with integer conversion
-				relY = my - boardY - 2; // loss of precision with integer conversion
-
-				// System.out.println(mx+", "+my);
-
-				int tileX, tileY;
-				tileX = relX / tileSize;
-				tileY = relY / tileSize;
-
 			}
 		}
 	}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void paintDebug() {
+		g.setColor(Color.RED);
+		g.fillRect(0, 0, (int) size.getWidth(), (int) size.getHeight());
+		g.fillRect(0, 0, size.width, size.height);
 
+		g.drawLine(boardX, 0, boardX, size.height);
+		g.drawLine(boardWidth + boardX, 0, boardWidth + boardX, size.height);
+
+		g.drawLine(0, boardY, size.width, boardY);
+		g.drawLine(0, boardHeight + boardY, size.width, boardHeight + boardY);
+
+		int posx, posy;
+		posx = 1;
+		posy = 2;
+		highlightSquare(posx, posy, Color.RED);
+		System.out.println(board.canMove(ColorStatus.BLACK, ColorStatus.BLACK_KING, posx, posy));
+		// g.fillOval(centerX, centerY, 10, 10);
 	}
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+	private class MListener implements MouseListener {
 
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			int mx, my;
+			mx = e.getX();
+			my = e.getY();
+			if (mx >= boardX && mx <= boardWidth + boardX) {
+				if (my >= boardY && my <= boardWidth + boardY) {
+
+					int relX, relY;
+
+					relX = mx - boardX - 2; // loss of precision with integer conversion
+					relY = my - boardY - 2; // loss of precision with integer conversion
+
+					int tileX, tileY;
+					tileX = relX / tileSize;
+					tileY = relY / tileSize;
+					options = null;
+					// board.showOptions(game.getCurrentPlayer(), -1, -1);
+
+					if (canMove[tileX][tileY]) {
+						options = board.showOptions(game.getCurrentPlayer(), tileX, tileY);
+						repaint();
+					}
+
+				}
+			}
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
 	}
 
 }

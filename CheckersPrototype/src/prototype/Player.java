@@ -3,11 +3,17 @@ public class Player{
 
   private String playerName;
 
-  private ColorStatus playerColor;
+  private ColorStatus checkerColor;
+  
+  private ColorStatus kingColor;
 
   public Player(String name, ColorStatus color){
     this.playerName = name;
-    this.playerColor = color;
+    this.checkerColor = color;
+    if(color == ColorStatus.WHITE)
+    		this.kingColor = ColorStatus.WHITE_KING;
+    else
+    		this.kingColor =ColorStatus.BLACK_KING;
   }
 
   public String getName(){
@@ -15,6 +21,10 @@ public class Player{
   }
 
   public ColorStatus playerColor(){
-    return this.playerColor;
+    return this.checkerColor;
+  }
+  
+  public ColorStatus kingColor() {
+	  return this.kingColor;
   }
 }
