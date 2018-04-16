@@ -1,8 +1,6 @@
 package prototype;
 
-import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Observer;
 
 public class Board extends Observable {
 	public static final int SIZE = 8;
@@ -34,72 +32,79 @@ public class Board extends Observable {
 	}
 
 	public boolean move(Player player, int ir, int ic, int fr, int fc) {
-		
-		//Allows for double jump.
+
+		// Allows for double jump.
 		boolean hasJumped = false;
-		
-		//temporary value to move.
+
+		// temporary value to move.
 		ColorStatus temp = this.board[ir][ic];
-		
-		//Debug console messages
-		if (Checkers_GUI.DEBUG) {
+
+		// Debug console messages
+		if (Checkers_GUI.debug) {
 			System.out.println("-----------------------------------------");
 			System.out.println("-----------------------------------------");
 			System.out.println("-----------------------------------------");
 			System.out.println("VALUE BEFORE MOVING: " + this.board[ir][ic]);
 		}
-		
+
 		this.board[ir][ic] = ColorStatus.EMPTY;
-		
-		//Debug console messages
-		if (Checkers_GUI.DEBUG) {
+
+		// Debug console messages
+		if (Checkers_GUI.debug) {
 			System.out.println("INITIAL COORDINATES: " + ir + " ROW " + ic + " COLUMN.");
 			System.out.println("VALUE AFTER MOVING: " + this.board[ir][ic]);
 			System.out.println("VALUE AT THE DESTINATION BEFORE MOVING: " + this.board[fr][fc]);
 		}
-		
-		//If a normal checker reaches the opposite side of the board, it becomes a King.
+
+		// If a normal checker reaches the opposite side of the board, it becomes a
+		// King.
 		if (fr == 0 && player.playerColor() == temp && player.playerColor() == ColorStatus.WHITE) {
 			temp = ColorStatus.WHITE_KING;
 		} else if (fr == SIZE && player.playerColor() == temp && player.playerColor() == ColorStatus.BLACK) {
 			temp = ColorStatus.BLACK_KING;
 		}
-		
+
 		this.board[fr][fc] = temp;
-		
-		//Debug console messages
-		if (Checkers_GUI.DEBUG) {
+
+		// Debug console messages
+		if (Checkers_GUI.debug) {
 			System.out.println("FINAL COORDINATE: " + fr + " ROW " + fc + " COL");
 			System.out.println("VALUE AT THE DESTINATION AFTER MOVING: " + this.board[fr][fc]);
 		}
-		
-		//Checking if the move is a jump.
+
+		// Checking if the move is a jump.
 		if (Math.abs(ir - fr) == 2 && Math.abs(ic - fc) == 2) {
 			int row = (ir + fr) / 2;
 			int col = (ic + fc) / 2;
-			
-			//Debug console messages
-			if (Checkers_GUI.DEBUG) {
+
+			// Debug console messages
+			if (Checkers_GUI.debug) {
 				System.out.println("MIDDLE COORDINATE: " + row + " ROW " + col + " COL");
 				System.out.println("BEFORE JUMP VALUE: " + this.board[row][col]);
 			}
-			
+
 			this.board[row][col] = ColorStatus.EMPTY;
-			
-			//Debug console messages
-			if (Checkers_GUI.DEBUG) {
+
+			// Debug console messages
+			if (Checkers_GUI.debug) {
 				System.out.println("middle coordinate: " + row + " row " + col + " col");
 				System.out.println("VALUE MIDDLE JUMP: " + this.board[row][col]);
 			}
-			
+
 			hasJumped = true;
-			
-			//Notify the game if one player loses all checkers.
+
+			// Notify the game if one player loses all checkers.
+
 			if (checkBoard(player.playerColor(), player.kingColor())) {
+				if(Checkers_GUI.debug) {
+					System.out.println("Notifying that the game is over...");
+				}
 				setChanged();
 				notifyObservers();
 			}
+
 		}
+
 		
 		return hasJumped;
 	}
@@ -183,11 +188,11 @@ public class Board extends Observable {
 		}
 		return result;
 	}
-	
-	public boolean[][] setAllFalse(){
+
+	public boolean[][] setAllFalse() {
 		boolean[][] result = new boolean[SIZE][SIZE];
-		for(int i = 0; i < SIZE; i++) {
-			for(int j = 0; j < SIZE; j++) {
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
 				result[i][j] = false;
 			}
 		}
@@ -198,63 +203,70 @@ public class Board extends Observable {
 		ColorStatus allyChecker = player.playerColor();
 		ColorStatus allyKing = player.kingColor();
 		ColorStatus checker = this.board[row][col];
-		boolean[][] result = new boolean[SIZE][SIZE];
+		boolean[][] result = setAllFalse();
+		boolean hasJumped = false;
 
-		for (int r = 0; r < SIZE; r++) {
-			for (int c = 0; c < SIZE; c++) {
-				result[r][c] = false;
-			}
-		}
 		if (row == -1 && col == -1) {
 			return result;
 		}
+
 		result[row][col] = true;
 
 		if (canJump(allyChecker, allyKing, row, col)) {
-			if (Checkers_GUI.DEBUG) {
+			if (Checkers_GUI.debug) {
 				System.out.println("The Checker color: " + checker + " can jump.");
-				
 			}
-
-			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
-					|| checker == ColorStatus.WHITE_KING) {
-				if (canJump(allyChecker, allyKing, row, col, row - 2, col + 2)) {
-					result[row - 2][col + 2] = true;
-				}
-				if (canJump(allyChecker, allyKing, row, col, row - 2, col - 2)) {
-					result[row - 2][col - 2] = true;
+		}
+		if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (canJump(allyChecker, allyKing, row, col, row - 2, col + 2)) {
+				result[row - 2][col + 2] = true;
+				hasJumped = true;
+				if (Checkers_GUI.debug) {
+					System.out.println("Can Jump at coordinates: " + (row - 2) + " Row " + (col + 2) + " Column");
 				}
 			}
-			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING
-					|| checker == ColorStatus.WHITE_KING) {
-				if (canJump(allyChecker, allyKing, row, col, row + 2, col + 2)) {
-					result[row + 2][col + 2] = true;
-				}
-				if (canJump(allyChecker, allyKing, row, col, row + 2, col - 2)) {
-					result[row + 2][col - 2] = true;
+			if (canJump(allyChecker, allyKing, row, col, row - 2, col - 2)) {
+				result[row - 2][col - 2] = true;
+				hasJumped = true;
+				if (Checkers_GUI.debug) {
+					System.out.println("Can Jump at coordinates: " + (row - 2) + " Row " + (col - 2) + " Column");
 				}
 			}
-		} else {
-
-			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
-					|| checker == ColorStatus.WHITE_KING) {
-				if (canMove(row - 1, col + 1)) {
-					result[row - 1][col + 1] = true;
-				}
-				if (canMove(row - 1, col - 1)) {
-					result[row - 1][col - 1] = true;
+		}
+		if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (canJump(allyChecker, allyKing, row, col, row + 2, col + 2)) {
+				result[row + 2][col + 2] = true;
+				hasJumped = true;
+				if (Checkers_GUI.debug) {
+					System.out.println("Can Jump at coordinates: " + (row + 2) + " Row " + (col + 2) + " Column");
 				}
 			}
-			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING
-					|| checker == ColorStatus.WHITE_KING) {
-				if (canMove(row + 1, col + 1)) {
-					result[row + 1][col + 1] = true;
-				}
-				if (canMove(row + 1, col - 1)) {
-					result[row + 1][col - 1] = true;
+			if (canJump(allyChecker, allyKing, row, col, row + 2, col - 2)) {
+				result[row + 2][col - 2] = true;
+				hasJumped = true;
+				if (Checkers_GUI.debug) {
+					System.out.println("Can Jump at coordinates: " + (row + 2) + " Row " + (col - 2) + " Column");
 				}
 			}
-
+		}
+		if (hasJumped) {
+			return result;
+		}
+		if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (canMove(row - 1, col + 1)) {
+				result[row - 1][col + 1] = true;
+			}
+			if (canMove(row - 1, col - 1)) {
+				result[row - 1][col - 1] = true;
+			}
+		}
+		if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (canMove(row + 1, col + 1)) {
+				result[row + 1][col + 1] = true;
+			}
+			if (canMove(row + 1, col - 1)) {
+				result[row + 1][col - 1] = true;
+			}
 		}
 
 		return result;
@@ -345,9 +357,9 @@ public class Board extends Observable {
 	}
 
 	private boolean checkBoard(ColorStatus checker, ColorStatus king) {
-		for (int r = 0; r < SIZE; r++) {
-			for (ColorStatus c : this.board[r]) {
-				if (c != checker || c != king || c != ColorStatus.EMPTY) {
+		for (int row = 0; row < SIZE; row++) {
+			for (ColorStatus c : this.board[row]) {
+				if (c != checker && c != king && c != ColorStatus.EMPTY) {
 					return false;
 				}
 			}

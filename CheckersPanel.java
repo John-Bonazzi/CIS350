@@ -10,12 +10,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
-
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-//This panel should be the same logic as the existing checkers game.
+@SuppressWarnings("serial")
 public class CheckersPanel extends JPanel implements Observer{
 
 	private Dimension size;
@@ -41,7 +39,7 @@ public class CheckersPanel extends JPanel implements Observer{
 		
 		this.parentFrame = gui;
 		// this.setBackground(Color.RED);
-		this.game = new Game(this);
+		this.game = new Game(this, gui);
 		this.board = new Board(this.game);
 		this.initBoard();
 		this.addMouseListener(new MListener());
@@ -166,7 +164,7 @@ public class CheckersPanel extends JPanel implements Observer{
 					g.fillOval(x, y, w, h);
 					break;
 				case EMPTY:
-					if (Checkers_GUI.DEBUG) {
+					if (Checkers_GUI.debug) {
 						g.setColor(Color.RED);
 						g.fillRect(x, y, w, h);
 					}
@@ -247,7 +245,7 @@ public class CheckersPanel extends JPanel implements Observer{
 					row = relY / tileSize;
 					// options = canMove; // set to null because it checks for it in paintComponent.
 					// board.showOptions(game.getCurrentPlayer(), -1, -1); //sets all to false
-					if (Checkers_GUI.DEBUG) {
+					if (Checkers_GUI.debug) {
 						System.out.println("SELECTED VALUE: " + checkerColor[row][col]);
 						System.out.println("COORDINATES: " + row + " ROW " + col + " COLUMN.");
 					}
@@ -326,9 +324,7 @@ public class CheckersPanel extends JPanel implements Observer{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			game.updateTime();
-			parentFrame.updateTimeDisplay(game.getTime());
-			
-			
+			parentFrame.updateTimeDisplay(game.getTime());	
 		}
 		
 	}

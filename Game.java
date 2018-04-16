@@ -3,7 +3,6 @@ package prototype;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.JPanel;
 
 public class Game extends Observable implements Observer {
 
@@ -20,8 +19,9 @@ public class Game extends Observable implements Observer {
 	
 
 
-	public Game(Observer gui) {
+	public Game(CheckersPanel panel, Checkers_GUI gui) {
 		players = new ArrayList<Player>();
+		this.addObserver(panel);
 		this.addObserver(gui);
 		this.gameRunning = true;
 		players.add(new Player("White", ColorStatus.WHITE));

@@ -1,11 +1,12 @@
 package prototype;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.Observable;
+import java.util.Observer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -14,10 +15,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class Checkers_GUI extends JFrame {
+@SuppressWarnings("serial")
+public class Checkers_GUI extends JFrame implements Observer {
 
-	public static boolean DEBUG = false;
-	private Dimension SIZE;
+	public static boolean debug = false;
+	private Dimension frameSize;
 
 	/*
 	 * Panel declarations
@@ -43,10 +45,10 @@ public class Checkers_GUI extends JFrame {
 	public Checkers_GUI(int xDimension, int yDimension, boolean debug) {
 		super("Checkers");
 
-		Checkers_GUI.DEBUG = debug;
+		Checkers_GUI.debug = debug;
 
-		SIZE = new Dimension(xDimension, yDimension);
-		this.setPreferredSize(SIZE);
+		frameSize = new Dimension(xDimension, yDimension);
+		this.setPreferredSize(frameSize);
 
 		// initializes all of the panels and sets their size.
 		panelInit();
@@ -114,9 +116,6 @@ public class Checkers_GUI extends JFrame {
 	}
 
 	public void updateTimeDisplay(int time) {
-		if(Checkers_GUI.DEBUG) {
-			System.out.println("TIME: " + time);
-		}
 		int minutes, seconds;
 		minutes = time / 60;
 		seconds = time % 60;
@@ -140,27 +139,34 @@ public class Checkers_GUI extends JFrame {
 		mainPanel = new JPanel(new BorderLayout());
 
 		// Takes up 3/4 of the screen.
-		checkersPanel = new CheckersPanel((int) (SIZE.width * .75), (int) (SIZE.height * .85), this);
+		checkersPanel = new CheckersPanel((int) (frameSize.width * .75), (int) (frameSize.height * .85), this);
 
 		statsPanel = new JPanel(new BorderLayout());
 		controlPanel = new JPanel(new GridLayout(0, 1));
 
 		// the lower quarter of the screen
-		statsPanel.setPreferredSize(new Dimension(SIZE.width, (int) (SIZE.height * .15)));
+		statsPanel.setPreferredSize(new Dimension(frameSize.width, (int) (frameSize.height * .15)));
 		// same height as board. quarter of the screen on the right.
-		controlPanel.setPreferredSize(new Dimension((int) (SIZE.width * .25), (int) (SIZE.height * .75)));
+		controlPanel.setPreferredSize(new Dimension((int) (frameSize.width * .25), (int) (frameSize.height * .75)));
 
 		mainPanel.add(checkersPanel, BorderLayout.CENTER);
 		mainPanel.add(statsPanel, BorderLayout.SOUTH);
 		mainPanel.add(controlPanel, BorderLayout.EAST);
 
 	}
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		concedeButton.setVisible(false);
+		newGameButton.setVisible(true);
+		
+	}
+
 
 	private class ButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
 			Object src = e.getSource();
 			if (src == newGameButton) {
 				checkersPanel.newGame(player1Name.getText(), player2Name.getText());
@@ -179,28 +185,20 @@ public class Checkers_GUI extends JFrame {
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-			SIZE = checkersPanel.getBounds().getSize();
-			checkersPanel.setSize(SIZE);
+			frameSize = checkersPanel.getBounds().getSize();
+			checkersPanel.setSize(frameSize);
 		}
 
 		@Override
-		public void componentMoved(ComponentEvent e) {
-			// TODO Auto-generated method stub
-
-		}
+		public void componentMoved(ComponentEvent e) {}
 
 		@Override
-		public void componentShown(ComponentEvent e) {
-			// TODO Auto-generated method stub
-
-		}
+		public void componentShown(ComponentEvent e) {}
 
 		@Override
-		public void componentHidden(ComponentEvent e) {
-			// TODO Auto-generated method stub
-
-		}
+		public void componentHidden(ComponentEvent e) {}
 
 	}
+
 
 }
