@@ -213,6 +213,7 @@ public class Board extends Observable {
 		if (canJump(allyChecker, allyKing, row, col)) {
 			if (Checkers_GUI.DEBUG) {
 				System.out.println("The Checker color: " + checker + " can jump.");
+				
 			}
 
 			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING

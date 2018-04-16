@@ -31,6 +31,7 @@ public class Checkers_GUI extends JFrame {
 	 * JComponents for the stats panel.
 	 */
 	private JLabel messageLabel, timeDisplay;
+	//private JPanel timePane;
 	private JTextField player1Name, player2Name;
 	private JButton changeName;
 
@@ -112,6 +113,25 @@ public class Checkers_GUI extends JFrame {
 
 	}
 
+	public void updateTimeDisplay(int time) {
+		if(Checkers_GUI.DEBUG) {
+			System.out.println("TIME: " + time);
+		}
+		int minutes, seconds;
+		minutes = time / 60;
+		seconds = time % 60;
+		String minutesLabel = "" + minutes;
+		String secondsLabel = "" + seconds;
+		if(minutes < 10) {
+			minutesLabel = "0" + minutes;
+		}
+		if(seconds < 10) {
+			secondsLabel = "0" + seconds;
+		}
+		this.timeDisplay.setText(minutesLabel + ":" + secondsLabel);
+	
+	}
+	
 	private void panelInit() {
 		/*
 		 * This section initializes all of the JPanels and sets up their sizes and
@@ -120,7 +140,7 @@ public class Checkers_GUI extends JFrame {
 		mainPanel = new JPanel(new BorderLayout());
 
 		// Takes up 3/4 of the screen.
-		checkersPanel = new CheckersPanel((int) (SIZE.width * .75), (int) (SIZE.height * .85));
+		checkersPanel = new CheckersPanel((int) (SIZE.width * .75), (int) (SIZE.height * .85), this);
 
 		statsPanel = new JPanel(new BorderLayout());
 		controlPanel = new JPanel(new GridLayout(0, 1));

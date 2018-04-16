@@ -16,6 +16,8 @@ public class Game extends Observable implements Observer {
 	/** The current player's color **/
 	private ColorStatus currentPlayer; 
 	
+	private int time = 0;
+	
 
 
 	public Game(Observer gui) {
@@ -39,6 +41,7 @@ public class Game extends Observable implements Observer {
 		players.add(new Player("Black", ColorStatus.BLACK));
 		this.currentPlayer = ColorStatus.WHITE;
 	}
+	
 	/***************************************************************
 	 * Overloaded constructor that let the player decide
 	 * its color when playing against the computer.
@@ -84,10 +87,22 @@ public class Game extends Observable implements Observer {
 	 * @param name2 Player 2's name
 	 ***************************************************************/
 	public void startGame(String name1, String name2) {
+		this.time = 0;
 		this.gameRunning = true;
 		this.players.clear();
 		players.add(new Player(name1, ColorStatus.WHITE));
 		players.add(new Player(name2, ColorStatus.BLACK));
+		this.currentPlayer = ColorStatus.WHITE;
+		setChanged();
+		notifyObservers();
+	}
+	
+	public void startGameAI(String name1) {
+		this.time = 0;
+		this.gameRunning = true;
+		this.players.clear();
+		players.add(new Player(name1, ColorStatus.WHITE));
+		players.add(new checkerAI(ColorStatus.BLACK));
 		this.currentPlayer = ColorStatus.WHITE;
 		setChanged();
 		notifyObservers();
@@ -127,6 +142,17 @@ public class Game extends Observable implements Observer {
 		}
 		else if(this.currentPlayer == ColorStatus.BLACK) {
 			this.currentPlayer = ColorStatus.WHITE;
+		}
+	}
+	
+	public int getTime() {
+		return this.time;
+	}
+	public void updateTime() {
+		this.time++;
+		if(time >= 300) {
+			setChanged();
+			notifyObservers();
 		}
 	}
 

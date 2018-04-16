@@ -4,24 +4,23 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 //This panel should be the same logic as the existing checkers game.
 public class CheckersPanel extends JPanel implements Observer{
 
 	private Dimension size;
 
-	public void setSize(Dimension size) {
-		this.size = size;
-		initBoard();
-		repaint();
-	}
-
+	private final int TIMER_DELAY = 1000;
 	private final float PERCENTAGE = (float) 0.75;
 	private Board board;
 	private Game game;
@@ -31,13 +30,16 @@ public class CheckersPanel extends JPanel implements Observer{
 	private int tileSize;
 	private boolean[][] canMove;
 	private boolean[][] options;
+	private Checkers_GUI parentFrame;
+	private Timer gameTimer;
 
 	private Graphics g;
 
-	public CheckersPanel(int xSize, int ySize) {
+	public CheckersPanel(int xSize, int ySize, Checkers_GUI gui) {
 		size = new Dimension(xSize, ySize);
 		this.setPreferredSize(size);
-
+		
+		this.parentFrame = gui;
 		// this.setBackground(Color.RED);
 		this.game = new Game(this);
 		this.board = new Board(this.game);
@@ -45,6 +47,8 @@ public class CheckersPanel extends JPanel implements Observer{
 		this.addMouseListener(new MListener());
 		canMove = board.canSelect(game.getCurrentPlayer());
 		options = canMove;
+		this.gameTimer = new Timer(TIMER_DELAY, new TimerListener());
+		this.gameTimer.start();
 	}
 
 	private void initBoard() {
@@ -182,14 +186,20 @@ public class CheckersPanel extends JPanel implements Observer{
 		game.startGame(player1, player2);
 		this.board = new Board(this.game);
 		this.options = board.canSelect(game.getCurrentPlayer());
+		this.gameTimer = new Timer(TIMER_DELAY, new TimerListener());
+		this.gameTimer.start();
 	}
 	
 	public void endGame() {
 		game.stopGame();	
+		this.board.setAllFalse();
+		this.gameTimer.stop();
+		repaint();
 	}
 	private void resetGame() {
-		repaint();	
+		this.gameTimer.stop();
 		this.options = this.board.setAllFalse();
+		repaint();		
 	}
 	/*
 	 * prints out misc. debug information.
@@ -311,6 +321,17 @@ public class CheckersPanel extends JPanel implements Observer{
 		}
 	}
 
+	private class TimerListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			game.updateTime();
+			parentFrame.updateTimeDisplay(game.getTime());
+			
+			
+		}
+		
+	}
 
 
 }
