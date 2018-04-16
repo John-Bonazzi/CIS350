@@ -33,7 +33,8 @@ public class Board extends Observable {
 		return this.board;
 	}
 
-	public void move(Player player, int ir, int ic, int fr, int fc) {
+	public boolean move(Player player, int ir, int ic, int fr, int fc) {
+		boolean hasJumped = false;
 		ColorStatus temp = this.board[ir][ic];
 		System.out.println("BEFORE VALUE: " + this.board[ir][ic]);
 		this.board[ir][ic] = ColorStatus.EMPTY;
@@ -58,6 +59,7 @@ public class Board extends Observable {
 			this.board[row][col] = ColorStatus.EMPTY;
 			System.out.println("middle coordinate: " + row + " row " + col + " col");
 			System.out.println("VALUE MIDDLE JUMP: " + this.board[row][col]);
+			hasJumped = true;
 			/*
 			 * if(checkBoard(player.playerColor(), player.kingColor())) { setChanged();
 			 * notifyObservers(); }
@@ -66,6 +68,7 @@ public class Board extends Observable {
 		System.out.println("-----------------------------------------");
 		System.out.println("-----------------------------------------");
 		System.out.println("-----------------------------------------");
+		return hasJumped;
 	}
 
 	public ColorStatus getColor(int row, int col) {
@@ -227,7 +230,7 @@ public class Board extends Observable {
 		return this.board[mr][mc] != player && this.board[mr][mc] != king && this.board[mr][mc] != ColorStatus.EMPTY;
 	}
 
-	private boolean canJump(ColorStatus player, ColorStatus king, int r, int c) {
+	public boolean canJump(ColorStatus player, ColorStatus king, int r, int c) {
 		int up, down, left, right;
 		int upJ, downJ, leftJ, rightJ;
 

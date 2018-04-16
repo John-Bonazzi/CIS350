@@ -242,11 +242,20 @@ public class CheckersPanel extends JPanel {
 							options = canMove;
 							repaint();
 						} else {
-							board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row, col);
-							game.nextPlayer();
-							canMove = board.canSelect(game.getCurrentPlayer());
-							options = canMove;
-							first = true;
+							boolean didJump = board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row, col);
+							if(didJump && board.canJump(game.getCurrentPlayer().playerColor(), game.getCurrentPlayer().kingColor(), row, col)) {
+								canMove = board.canSelect(game.getCurrentPlayer());
+								options = board.showOptions(game.getCurrentPlayer(), row, col);
+								this.originalCol = col;
+								this.originalRow = row;
+							}
+							else {
+								game.nextPlayer();
+								canMove = board.canSelect(game.getCurrentPlayer());
+								options = canMove;
+								first = true;
+							}
+							
 							repaint();
 						}
 					}
