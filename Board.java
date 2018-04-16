@@ -183,6 +183,16 @@ public class Board extends Observable {
 		}
 		return result;
 	}
+	
+	public boolean[][] setAllFalse(){
+		boolean[][] result = new boolean[SIZE][SIZE];
+		for(int i = 0; i < SIZE; i++) {
+			for(int j = 0; j < SIZE; j++) {
+				result[i][j] = false;
+			}
+		}
+		return result;
+	}
 
 	public boolean[][] showOptions(Player player, int row, int col) {
 		ColorStatus allyChecker = player.playerColor();

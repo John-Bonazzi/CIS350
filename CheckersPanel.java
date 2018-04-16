@@ -6,11 +6,13 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JPanel;
 
 //This panel should be the same logic as the existing checkers game.
-public class CheckersPanel extends JPanel {
+public class CheckersPanel extends JPanel implements Observer{
 
 	private Dimension size;
 
@@ -32,12 +34,12 @@ public class CheckersPanel extends JPanel {
 
 	private Graphics g;
 
-	public CheckersPanel(int xSize, int ySize, Game g) {
+	public CheckersPanel(int xSize, int ySize) {
 		size = new Dimension(xSize, ySize);
 		this.setPreferredSize(size);
 
 		// this.setBackground(Color.RED);
-		this.game = g;
+		this.game = new Game(this);
 		this.board = new Board(this.game);
 		this.initBoard();
 		this.addMouseListener(new MListener());
@@ -169,7 +171,26 @@ public class CheckersPanel extends JPanel {
 			}
 		}
 	}
+	
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		resetGame();	
+	}
 
+	public void newGame(String player1, String player2) {
+		game.startGame(player1, player2);
+		this.board = new Board(this.game);
+		this.options = board.canSelect(game.getCurrentPlayer());
+	}
+	
+	public void endGame() {
+		game.stopGame();	
+	}
+	private void resetGame() {
+		repaint();	
+		this.options = this.board.setAllFalse();
+	}
 	/*
 	 * prints out misc. debug information.
 	 */
@@ -221,6 +242,10 @@ public class CheckersPanel extends JPanel {
 						System.out.println("COORDINATES: " + row + " ROW " + col + " COLUMN.");
 					}
 					
+					//After the debugging print of the coordinates and value selected, do nothing if the game is over.
+					if(!game.isGameRunning()) {
+						return;
+					}
 					//The position selected is a true (valid) position and it's the first action in the turn.
 					if (options[row][col] && first) {
 						this.originalRow = row;
@@ -259,7 +284,8 @@ public class CheckersPanel extends JPanel {
 								game.nextPlayer();
 								canMove = board.canSelect(game.getCurrentPlayer());
 								options = canMove;
-								first = true;
+								this.first = true;
+								this.didJump = false;
 							}
 						}
 					}
@@ -284,5 +310,7 @@ public class CheckersPanel extends JPanel {
 		public void mouseExited(MouseEvent e) {
 		}
 	}
+
+
 
 }

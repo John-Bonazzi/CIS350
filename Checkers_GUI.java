@@ -6,7 +6,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,7 +18,6 @@ public class Checkers_GUI extends JFrame {
 
 	public static boolean DEBUG = false;
 	private Dimension SIZE;
-	private Game game;
 
 	/*
 	 * Panel declarations
@@ -39,14 +39,13 @@ public class Checkers_GUI extends JFrame {
 	 */
 	private JButton newGameButton, concedeButton, newGameVsAIButton, scoreboardButton;
 
-	public Checkers_GUI(int xDimension, int yDimension, Game game, boolean debug) {
+	public Checkers_GUI(int xDimension, int yDimension, boolean debug) {
 		super("Checkers");
-		
+
 		Checkers_GUI.DEBUG = debug;
-		
+
 		SIZE = new Dimension(xDimension, yDimension);
 		this.setPreferredSize(SIZE);
-		this.game = game;
 
 		// initializes all of the panels and sets their size.
 		panelInit();
@@ -56,33 +55,7 @@ public class Checkers_GUI extends JFrame {
 		 * add a component listener to detect resizing and adjust/update the checkers
 		 * panel accordingly.
 		 */
-		this.addComponentListener(new ComponentListener() {
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				SIZE = checkersPanel.getBounds().getSize();
-				checkersPanel.setSize(SIZE);
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void componentShown(ComponentEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-		});
+		this.addComponentListener(new GuiComponentListener());
 
 		// add the JPanel that contains all the others.
 		this.add(mainPanel);
@@ -102,7 +75,10 @@ public class Checkers_GUI extends JFrame {
 		controlPanel.add(newGameVsAIButton);
 		controlPanel.add(scoreboardButton);
 		controlPanel.add(concedeButton);
-		
+
+		newGameButton.addActionListener(new ButtonListener());
+		concedeButton.addActionListener(new ButtonListener());
+
 		newGameButton.setVisible(false);
 		newGameVsAIButton.setVisible(false);
 
@@ -144,7 +120,7 @@ public class Checkers_GUI extends JFrame {
 		mainPanel = new JPanel(new BorderLayout());
 
 		// Takes up 3/4 of the screen.
-		checkersPanel = new CheckersPanel((int) (SIZE.width * .75), (int) (SIZE.height * .85), this.game);
+		checkersPanel = new CheckersPanel((int) (SIZE.width * .75), (int) (SIZE.height * .85));
 
 		statsPanel = new JPanel(new BorderLayout());
 		controlPanel = new JPanel(new GridLayout(0, 1));
@@ -154,11 +130,56 @@ public class Checkers_GUI extends JFrame {
 		// same height as board. quarter of the screen on the right.
 		controlPanel.setPreferredSize(new Dimension((int) (SIZE.width * .25), (int) (SIZE.height * .75)));
 
-		
-
 		mainPanel.add(checkersPanel, BorderLayout.CENTER);
 		mainPanel.add(statsPanel, BorderLayout.SOUTH);
 		mainPanel.add(controlPanel, BorderLayout.EAST);
+
+	}
+
+	private class ButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			Object src = e.getSource();
+			if (src == newGameButton) {
+				checkersPanel.newGame(player1Name.getText(), player2Name.getText());
+				concedeButton.setVisible(true);
+				newGameButton.setVisible(false);
+			}
+			else if (src == concedeButton) {
+				checkersPanel.endGame();
+				newGameButton.setVisible(true);
+				concedeButton.setVisible(false);
+			}
+		}
+	}
+
+	private class GuiComponentListener implements ComponentListener {
+
+		@Override
+		public void componentResized(ComponentEvent e) {
+			SIZE = checkersPanel.getBounds().getSize();
+			checkersPanel.setSize(SIZE);
+		}
+
+		@Override
+		public void componentMoved(ComponentEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void componentShown(ComponentEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void componentHidden(ComponentEvent e) {
+			// TODO Auto-generated method stub
+
+		}
 
 	}
 

@@ -3,8 +3,9 @@ package prototype;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JPanel;
 
-public class Game implements Observer {
+public class Game extends Observable implements Observer {
 
 	/** A list of players **/
 	private ArrayList<Player> players;
@@ -14,6 +15,17 @@ public class Game implements Observer {
 	
 	/** The current player's color **/
 	private ColorStatus currentPlayer; 
+	
+
+
+	public Game(Observer gui) {
+		players = new ArrayList<Player>();
+		this.addObserver(gui);
+		this.gameRunning = true;
+		players.add(new Player("White", ColorStatus.WHITE));
+		players.add(new Player("Black", ColorStatus.BLACK));
+		this.currentPlayer = ColorStatus.WHITE;
+	}
 
 	/***************************************************************
 	 * Constructor for a Game object.
@@ -22,13 +34,11 @@ public class Game implements Observer {
 	 * whether the game is running or not.
 	 ***************************************************************/
 	public Game() {
-		players = new ArrayList<Player>();
 		this.gameRunning = true;
 		players.add(new Player("White", ColorStatus.WHITE));
 		players.add(new Player("Black", ColorStatus.BLACK));
 		this.currentPlayer = ColorStatus.WHITE;
 	}
-
 	/***************************************************************
 	 * Overloaded constructor that let the player decide
 	 * its color when playing against the computer.
@@ -75,9 +85,12 @@ public class Game implements Observer {
 	 ***************************************************************/
 	public void startGame(String name1, String name2) {
 		this.gameRunning = true;
-		new Game();
-		this.players.get(0).setName(name1);
-		this.players.get(1).setName(name2);
+		this.players.clear();
+		players.add(new Player(name1, ColorStatus.WHITE));
+		players.add(new Player(name2, ColorStatus.BLACK));
+		this.currentPlayer = ColorStatus.WHITE;
+		setChanged();
+		notifyObservers();
 	}
 	
 	/***************************************************************
@@ -85,6 +98,8 @@ public class Game implements Observer {
 	 ***************************************************************/
 	public void stopGame() {
 		this.gameRunning = false;
+		setChanged();
+		notifyObservers();
 	}
 
 	/***************************************************************
@@ -117,7 +132,7 @@ public class Game implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		stopGame();
+		stopGame();	
 	}
 	
 	
