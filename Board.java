@@ -4,37 +4,15 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-/***************************************************************
- * The Board class is used to create the board and hold the 
- *  logic that is used to play checkers.
- * @author Gionata Bonazzi
- * @author Cole Sellers
- * @author Brendan Cronan
- * @author Rosa Fleming
- * @version stable build 15 April 2018
- ***************************************************************/
 public class Board extends Observable {
-	//The final size of the board is 8x8
 	public static final int SIZE = 8;
-	//Creates a instance of the board set to the size of the board
 	private ColorStatus[][] board = new ColorStatus[SIZE][SIZE];
 
-/***************************************************************
- * Constructor of the board class, it takes in an Object of the
- * game abd adds an observer of and initialize the board.
- * @param game
- * 					A instance of the game class.
- ***************************************************************/
 	public Board(Game game) {
 		this.addObserver(game);
 		Init();
 	}
 
-	/***************************************************************
-	* initializes the board to 8x8 setting the rows and columns. 
-	* it then sets the colorStatus of each specific tile to either
-	* White, Black, or empty.
-	***************************************************************/
 	private void Init() {
 		for (int r = 0; r < SIZE; r++) {
 			for (int c = 0; c < SIZE; c++) {
@@ -51,73 +29,81 @@ public class Board extends Observable {
 		}
 	}
 
-	/***************************************************************
-	* Gets the current state of the board.
-	* @return The current state of the board.
- 	***************************************************************/
 	public ColorStatus[][] getBoard() {
 		return this.board;
 	}
 
-	/***************************************************************
-  * Constructor of the board class, it takes in an Object of the
-  * game abd adds an observer of and initialize the board.
-  * @param player
-	* 				A instance of the player class.
-	* @param ir
-	*					The initial row of the piece
-	* @param ic
-	*					The initial column of the piece
-	* @param fr
-	*					The final row of the piece after move
-	* @param fc
-	*					The final column of the piece after move.
-	* @return if the player has made a jump 
-  ***************************************************************/
 	public boolean move(Player player, int ir, int ic, int fr, int fc) {
+		
+		//Allows for double jump.
 		boolean hasJumped = false;
+		
+		//temporary value to move.
 		ColorStatus temp = this.board[ir][ic];
-		System.out.println("BEFORE VALUE: " + this.board[ir][ic]);
+		
+		//Debug console messages
+		if (Checkers_GUI.DEBUG) {
+			System.out.println("-----------------------------------------");
+			System.out.println("-----------------------------------------");
+			System.out.println("-----------------------------------------");
+			System.out.println("VALUE BEFORE MOVING: " + this.board[ir][ic]);
+		}
+		
 		this.board[ir][ic] = ColorStatus.EMPTY;
-		System.out.println("Initial coordinate: " + ir + " row " + ic + " col");
-		System.out.println("VALUE: " + this.board[ir][ic]);
-		System.out.println("VALUE BEFORE MOVE: " + this.board[fr][fc]);
-		if (fr == 0 && player.playerColor() == ColorStatus.WHITE) {
+		
+		//Debug console messages
+		if (Checkers_GUI.DEBUG) {
+			System.out.println("INITIAL COORDINATES: " + ir + " ROW " + ic + " COLUMN.");
+			System.out.println("VALUE AFTER MOVING: " + this.board[ir][ic]);
+			System.out.println("VALUE AT THE DESTINATION BEFORE MOVING: " + this.board[fr][fc]);
+		}
+		
+		//If a normal checker reaches the opposite side of the board, it becomes a King.
+		if (fr == 0 && player.playerColor() == temp && player.playerColor() == ColorStatus.WHITE) {
 			temp = ColorStatus.WHITE_KING;
-		} else if (fr == SIZE && player.playerColor() == ColorStatus.BLACK) {
+		} else if (fr == SIZE && player.playerColor() == temp && player.playerColor() == ColorStatus.BLACK) {
 			temp = ColorStatus.BLACK_KING;
 		}
+		
 		this.board[fr][fc] = temp;
-		System.out.println("Final coordinate: " + fr + " row " + fc + " col");
-		System.out.println("VALUE AFTER MOVE: " + this.board[fr][fc]);
+		
+		//Debug console messages
+		if (Checkers_GUI.DEBUG) {
+			System.out.println("FINAL COORDINATE: " + fr + " ROW " + fc + " COL");
+			System.out.println("VALUE AT THE DESTINATION AFTER MOVING: " + this.board[fr][fc]);
+		}
+		
+		//Checking if the move is a jump.
 		if (Math.abs(ir - fr) == 2 && Math.abs(ic - fc) == 2) {
 			int row = (ir + fr) / 2;
 			int col = (ic + fc) / 2;
-			System.out.println("IF");
-			System.out.println("middle coordinate: " + row + " row " + (ic + fc) / 2 + " col");
-			System.out.println("BEFORE JUMP VALUE: " + this.board[row][col]);
-
+			
+			//Debug console messages
+			if (Checkers_GUI.DEBUG) {
+				System.out.println("MIDDLE COORDINATE: " + row + " ROW " + col + " COL");
+				System.out.println("BEFORE JUMP VALUE: " + this.board[row][col]);
+			}
+			
 			this.board[row][col] = ColorStatus.EMPTY;
-			System.out.println("middle coordinate: " + row + " row " + col + " col");
-			System.out.println("VALUE MIDDLE JUMP: " + this.board[row][col]);
+			
+			//Debug console messages
+			if (Checkers_GUI.DEBUG) {
+				System.out.println("middle coordinate: " + row + " row " + col + " col");
+				System.out.println("VALUE MIDDLE JUMP: " + this.board[row][col]);
+			}
+			
 			hasJumped = true;
-			/*
-			 * if(checkBoard(player.playerColor(), player.kingColor())) { setChanged();
-			 * notifyObservers(); }
-			 */
+			
+			//Notify the game if one player loses all checkers.
+			if (checkBoard(player.playerColor(), player.kingColor())) {
+				setChanged();
+				notifyObservers();
+			}
 		}
-		System.out.println("-----------------------------------------");
-		System.out.println("-----------------------------------------");
-		System.out.println("-----------------------------------------");
+		
 		return hasJumped;
 	}
 
-
-	/***************************************************************
-	* 
-	* @return 
-	*			The current state of the board is returned.
- 	***************************************************************/
 	public ColorStatus getColor(int row, int col) {
 		if (checkBounds(row) || checkBounds(col))
 			return ColorStatus.EMPTY;
@@ -189,7 +175,8 @@ public class Board extends Observable {
 			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING)
 				result = result || this.board[up][right] == ColorStatus.EMPTY
 						|| this.board[up][left] == ColorStatus.EMPTY;
-			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING
+					|| checker == ColorStatus.WHITE_KING) {
 				result = result || this.board[down][right] == ColorStatus.EMPTY
 						|| this.board[down][left] == ColorStatus.EMPTY;
 			}
@@ -214,7 +201,9 @@ public class Board extends Observable {
 		result[row][col] = true;
 
 		if (canJump(allyChecker, allyKing, row, col)) {
-			System.out.println("The Checker color: " + checker + " can jump."); //FIXME: DEBUG
+			if (Checkers_GUI.DEBUG) {
+				System.out.println("The Checker color: " + checker + " can jump.");
+			}
 
 			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
 					|| checker == ColorStatus.WHITE_KING) {
@@ -234,8 +223,7 @@ public class Board extends Observable {
 					result[row + 2][col - 2] = true;
 				}
 			}
-		} 
-		else {
+		} else {
 
 			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
 					|| checker == ColorStatus.WHITE_KING) {
@@ -321,22 +309,24 @@ public class Board extends Observable {
 		}
 
 		if (checker == player || checker == king) {
-			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
+					|| checker == ColorStatus.WHITE_KING) {
 				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && (this.board[up][right] == enemyChecker
-								|| this.board[up][right] == enemyKing))
+						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY
+								&& (this.board[up][right] == enemyChecker || this.board[up][right] == enemyKing))
 
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && (this.board[up][left] == enemyChecker
-								|| this.board[up][left] == enemyKing));
+						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY
+								&& (this.board[up][left] == enemyChecker || this.board[up][left] == enemyKing));
 			}
 
-			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING ||  checker == ColorStatus.WHITE_KING) {
+			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING
+					|| checker == ColorStatus.WHITE_KING) {
 				result = result
-						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY && (this.board[down][right] == enemyChecker
-								|| this.board[down][right] == enemyKing))
+						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY
+								&& (this.board[down][right] == enemyChecker || this.board[down][right] == enemyKing))
 
-						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY && (this.board[down][left] == enemyChecker
-								|| this.board[down][left] == enemyKing));
+						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY
+								&& (this.board[down][left] == enemyChecker || this.board[down][left] == enemyKing));
 			}
 
 		}

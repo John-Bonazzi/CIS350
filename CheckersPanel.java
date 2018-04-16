@@ -65,42 +65,26 @@ public class CheckersPanel extends JPanel {
 
 		g.setColor(Color.RED);
 
-		// g.setColor(Color.BLACK);
-		// g.drawRect(boardX, boardY, boardWidth + 1, boardWidth + 1);
-
 		// Draw the initial Board
-		this.paintBoard(boardX, boardY, boardWidth, boardHeight); // ts is the tile size.
+		this.paintBoard(boardX, boardY, boardWidth, boardHeight);
+
 		// Draw pieces
 		this.paintPieces(boardX, boardY, boardWidth, boardHeight);
 
-		// Make the board of checkers that can move
-		// canMove = board.canSelect(game.getCurrentPlayer());
-
 		// Highlight available pieces
-
-		this.highlightCheckers(options);
-
-		/*
-		 * if (this.options != null) this.highlightCheckers(options); else
-		 * this.highlightCheckers(canMove);
-		 */
-		/*
-		 * else System.out.println("Please Select a Checker.");// Change this to a
-		 * JLabel output.
-		 */
-
-		// highlightSquare(g);
-		// highlight legal moves
+		this.highlightCheckers(this.options);
 
 	}
 
 	private void highlightCheckers(boolean[][] brd) {
-		// System.out.print(game.getCurrentPlayer().getName());
 
+		// The highlighting color.
+		Color cy = Color.CYAN;
+
+		// Draw a filled square for each true value in the matrix.
 		for (int row = 0; row < Board.SIZE; row++) {
 			for (int col = 0; col < Board.SIZE; col++) {
 				if (brd[row][col]) {
-					Color cy = Color.CYAN;
 					highlightSquare(col, row, cy);
 				}
 			}
@@ -176,8 +160,10 @@ public class CheckersPanel extends JPanel {
 					g.fillOval(x, y, w, h);
 					break;
 				case EMPTY:
-					g.setColor(Color.RED);
-					g.fillRect(x, y, w, h);
+					if (Checkers_GUI.DEBUG) {
+						g.setColor(Color.RED);
+						g.fillRect(x, y, w, h);
+					}
 					break;
 				}
 			}
@@ -208,6 +194,7 @@ public class CheckersPanel extends JPanel {
 	private class MListener implements MouseListener {
 
 		private boolean first = true;
+		boolean didJump = false;
 		private int originalRow;
 		private int originalCol;
 
@@ -229,48 +216,73 @@ public class CheckersPanel extends JPanel {
 					row = relY / tileSize;
 					// options = canMove; // set to null because it checks for it in paintComponent.
 					// board.showOptions(game.getCurrentPlayer(), -1, -1); //sets all to false
-					System.out.println("SELECTED VALUE: " + checkerColor[row][col]);
+					if (Checkers_GUI.DEBUG) {
+						System.out.println("SELECTED VALUE: " + checkerColor[row][col]);
+						System.out.println("COORDINATES: " + row + " ROW " + col + " COLUMN.");
+					}
+					
+					//The position selected is a true (valid) position and it's the first action in the turn.
 					if (options[row][col] && first) {
 						this.originalRow = row;
 						this.originalCol = col;
 						options = board.showOptions(game.getCurrentPlayer(), row, col);
 						this.first = false;
-						repaint();
-					} else if (!first && options[row][col]) {
+					} 
+					//The position selected is a true (valid) position and a checker has been selected.
+					else if (!first && options[row][col]) {
+						
+						//If the selected move is the original checker.
 						if (col == this.originalCol && row == this.originalRow) {
 							this.first = true;
 							options = canMove;
-							repaint();
-						} else {
-							boolean didJump = board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row, col);
-							if(didJump && board.canJump(game.getCurrentPlayer().playerColor(), game.getCurrentPlayer().kingColor(), row, col)) {
+						} 
+						else {
+
+							// Prevent a player from doing more than 2 jumps in one turn.
+							if (didJump) {
+								board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row, col);
+								didJump = false;
+							} else {
+								didJump = board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row,
+										col);
+							}
+
+							// If there was a jump, and the same checker can jump again, show the moves for
+							// that checker only
+							if (didJump && board.canJump(game.getCurrentPlayer().playerColor(),
+									game.getCurrentPlayer().kingColor(), row, col)) {
 								canMove = board.canSelect(game.getCurrentPlayer());
 								options = board.showOptions(game.getCurrentPlayer(), row, col);
 								this.originalCol = col;
 								this.originalRow = row;
-							}
-							else {
+							} else {
 								game.nextPlayer();
 								canMove = board.canSelect(game.getCurrentPlayer());
 								options = canMove;
 								first = true;
 							}
-							
-							repaint();
 						}
 					}
+					repaint();
 				}
 			}
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent e) {}
+		public void mouseClicked(MouseEvent e) {
+		}
+
 		@Override
-		public void mousePressed(MouseEvent e) {}
+		public void mousePressed(MouseEvent e) {
+		}
+
 		@Override
-		public void mouseEntered(MouseEvent e) {}
+		public void mouseEntered(MouseEvent e) {
+		}
+
 		@Override
-		public void mouseExited(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {
+		}
 	}
 
 }

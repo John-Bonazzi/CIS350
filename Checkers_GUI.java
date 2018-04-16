@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 
 public class Checkers_GUI extends JFrame {
 
+	public static boolean DEBUG = false;
 	private Dimension SIZE;
 	private Game game;
 
@@ -38,9 +39,11 @@ public class Checkers_GUI extends JFrame {
 	 */
 	private JButton newGameButton, concedeButton, newGameVsAIButton, scoreboardButton;
 
-	public Checkers_GUI(int xDimension, int yDimension, Game game) {
+	public Checkers_GUI(int xDimension, int yDimension, Game game, boolean debug) {
 		super("Checkers");
-
+		
+		Checkers_GUI.DEBUG = debug;
+		
 		SIZE = new Dimension(xDimension, yDimension);
 		this.setPreferredSize(SIZE);
 		this.game = game;
@@ -158,16 +161,5 @@ public class Checkers_GUI extends JFrame {
 		mainPanel.add(controlPanel, BorderLayout.EAST);
 
 	}
-
-	public void actionPerformed(ActionEvent evt) {
-		/*
-		* Event listener used for the start and stop game buttons.
-		*/
-		Object src = evt.getSource();
-		if (src == newGameButton)
-			 game.startGame();
-		else if (src == concedeButton)
-			 game.stopGame();
- }
 
 }
