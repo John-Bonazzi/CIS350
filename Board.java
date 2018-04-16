@@ -135,7 +135,7 @@ public class Board extends Observable {
 
 		boolean result = false;
 		ColorStatus checker = this.board[r][c];
-		if (this.board[r][c] == player || this.board[r][c] == king) {
+		if (checker == player || checker == king) {
 			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING)
 				result = result || this.board[up][right] == ColorStatus.EMPTY
 						|| this.board[up][left] == ColorStatus.EMPTY;
@@ -164,6 +164,7 @@ public class Board extends Observable {
 		result[row][col] = true;
 
 		if (canJump(allyChecker, allyKing, row, col)) {
+			System.out.println("The Checker color: " + checker + " can jump."); //FIXME: DEBUG
 
 			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
 					|| checker == ColorStatus.WHITE_KING) {
@@ -183,7 +184,8 @@ public class Board extends Observable {
 					result[row + 2][col - 2] = true;
 				}
 			}
-		} else {
+		} 
+		else {
 
 			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING
 					|| checker == ColorStatus.WHITE_KING) {
@@ -268,7 +270,7 @@ public class Board extends Observable {
 			enemyKing = ColorStatus.BLACK_KING;
 		}
 
-		if (this.board[r][c] == player || this.board[r][c] == king) {
+		if (checker == player || checker == king) {
 			if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
 				result = result
 						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && (this.board[up][right] == enemyChecker
@@ -280,11 +282,11 @@ public class Board extends Observable {
 
 			if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING ||  checker == ColorStatus.WHITE_KING) {
 				result = result
-						|| (this.board[upJ][rightJ] == ColorStatus.EMPTY && (this.board[up][right] == enemyChecker
-								|| this.board[up][right] == enemyKing))
+						|| (this.board[downJ][rightJ] == ColorStatus.EMPTY && (this.board[down][right] == enemyChecker
+								|| this.board[down][right] == enemyKing))
 
-						|| (this.board[upJ][leftJ] == ColorStatus.EMPTY && (this.board[up][left] == enemyChecker
-								|| this.board[up][left] == enemyKing));
+						|| (this.board[downJ][leftJ] == ColorStatus.EMPTY && (this.board[down][left] == enemyChecker
+								|| this.board[down][left] == enemyKing));
 			}
 
 		}
