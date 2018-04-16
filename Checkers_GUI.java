@@ -159,4 +159,12 @@ public class Checkers_GUI extends JFrame {
 
 	}
 
+	public void actionPerformed(ActionEvent evt) {
+		Object src = evt.getSource();
+		if (src == newGameButton)
+			 game.startGame();
+		else if (src == concedeButton)
+			 game.stopGame();
+ }
+
 }
