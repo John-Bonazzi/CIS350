@@ -160,6 +160,9 @@ public class Checkers_GUI extends JFrame {
 	}
 
 	public void actionPerformed(ActionEvent evt) {
+		/*
+		* Event listener used for the start and stop game buttons.
+		*/
 		Object src = evt.getSource();
 		if (src == newGameButton)
 			 game.startGame();
