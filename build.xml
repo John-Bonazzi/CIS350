@@ -20,6 +20,7 @@
     <javac srcdir="${src}" destdir="${build}" includes="MListener.java"/>
     <javac srcdir="${src}" destdir="${build}" includes="ColorStatus.java"/>
     <javac srcdir="${src}" destdir="${build}" includes="Player.java"/>
+    <javac srcdir="${src}" destdir="${build}" includes="checkerAI.java"/>
     <javac srcdir="${src}" destdir="${build}" includes="Board.java"/>
     <javac srcdir="${src}" destdir="${build}" includes="Game.java"/>
     <javac srcdir="${src}" destdir="${build}" includes="CheckersPanel.java"/>
