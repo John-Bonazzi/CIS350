@@ -54,8 +54,9 @@ public class CheckersPanel extends JPanel implements Observer{
 		this.gameTimer.start();
 	}
 
-	public void newGameAI(String player) {
+	public void newGameAI(String player, GameMode gameMode) {
 		this.againstAI = true;
+		this.game.setGameMode(gameMode);
 		this.game.startGameAI(player);
 		this.board = new Board(this.game);
 		this.options = board.canSelect(game.getCurrentPlayer());
@@ -207,7 +208,8 @@ public class CheckersPanel extends JPanel implements Observer{
 		resetGame();		
 	}
 
-	public void newGame(String player1, String player2) {
+	public void newGame(String player1, String player2, GameMode gameMode) {
+		game.setGameMode(gameMode);
 		game.startGame(player1, player2);
 		this.againstAI = false;
 		this.board = new Board(this.game);

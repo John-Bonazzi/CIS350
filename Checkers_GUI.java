@@ -33,7 +33,7 @@ public class Checkers_GUI extends JFrame implements Observer {
 	 * JComponents for the stats panel.
 	 */
 	private JLabel messageLabel, timeDisplay;
-	//private JPanel timePane;
+	// private JPanel timePane;
 	private JTextField player1Name, player2Name;
 	private JButton changeName;
 
@@ -41,6 +41,11 @@ public class Checkers_GUI extends JFrame implements Observer {
 	 * JComponents for the control panel.
 	 */
 	private JButton newGameButton, concedeButton, newGameVsAIButton, scoreboardButton;
+
+	private JButton debugModeButton, backButton;
+	private JButton freeGameMode, gameTimedMode, turnTimedMode;
+	
+	boolean aiMode;
 
 	public Checkers_GUI(int xDimension, int yDimension, boolean debug) {
 		super("Checkers");
@@ -62,7 +67,7 @@ public class Checkers_GUI extends JFrame implements Observer {
 
 		// add the JPanel that contains all the others.
 		this.add(mainPanel);
-		
+
 		// Allows the x button to close the window.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
@@ -76,20 +81,44 @@ public class Checkers_GUI extends JFrame implements Observer {
 		newGameVsAIButton = new JButton("New Game vs AI");
 		scoreboardButton = new JButton("Display Scoreboard");
 		concedeButton = new JButton("Concede Game");
+		this.freeGameMode = new JButton("Free Mode");
+		this.gameTimedMode = new JButton("Timed Game");
+		this.turnTimedMode = new JButton("Timed Turn");
+		this.backButton = new JButton("Back");
+		this.debugModeButton = new JButton();
+		if (Checkers_GUI.debug) {
+			this.debugModeButton.setText("Debug: on");
+		} else {
+			this.debugModeButton.setText("Debug: off");
+		}
 
-		controlPanel.add(newGameButton);
-		controlPanel.add(newGameVsAIButton);
-		controlPanel.add(scoreboardButton);
-		controlPanel.add(concedeButton);
+		controlPanel.add(this.scoreboardButton);
+		controlPanel.add(this.concedeButton);
+		controlPanel.add(this.debugModeButton);
+		controlPanel.add(this.newGameButton);
+		controlPanel.add(this.newGameVsAIButton);
+		controlPanel.add(this.freeGameMode);
+		controlPanel.add(this.gameTimedMode);
+		controlPanel.add(this.turnTimedMode);
+		controlPanel.add(this.backButton);
 
 		this.newGameButton.addActionListener(new ButtonListener());
 		this.concedeButton.addActionListener(new ButtonListener());
 		this.newGameVsAIButton.addActionListener(new ButtonListener());
 		this.scoreboardButton.addActionListener(new ButtonListener());
 		this.changeName.addActionListener(new ButtonListener());
+		this.debugModeButton.addActionListener(new ButtonListener());
+		this.freeGameMode.addActionListener(new ButtonListener());
+		this.gameTimedMode.addActionListener(new ButtonListener());
+		this.turnTimedMode.addActionListener(new ButtonListener());
+		this.backButton.addActionListener(new ButtonListener());
 
-		newGameButton.setVisible(false);
-		newGameVsAIButton.setVisible(false);
+		this.newGameButton.setVisible(false);
+		this.newGameVsAIButton.setVisible(false);
+		this.freeGameMode.setVisible(false);
+		this.turnTimedMode.setVisible(false);
+		this.gameTimedMode.setVisible(false);
+		this.backButton.setVisible(false);
 
 	}
 
@@ -127,16 +156,16 @@ public class Checkers_GUI extends JFrame implements Observer {
 		seconds = time % 60;
 		String minutesLabel = "" + minutes;
 		String secondsLabel = "" + seconds;
-		if(minutes < 10) {
+		if (minutes < 10) {
 			minutesLabel = "0" + minutes;
 		}
-		if(seconds < 10) {
+		if (seconds < 10) {
 			secondsLabel = "0" + seconds;
 		}
 		this.timeDisplay.setText(minutesLabel + ":" + secondsLabel);
-	
+
 	}
-	
+
 	private void panelInit() {
 		/*
 		 * This section initializes all of the JPanels and sets up their sizes and
@@ -160,6 +189,15 @@ public class Checkers_GUI extends JFrame implements Observer {
 		mainPanel.add(controlPanel, BorderLayout.EAST);
 
 	}
+
+	private void changeDebugMode() {
+		Checkers_GUI.debug = !Checkers_GUI.debug;
+		if (Checkers_GUI.debug) {
+			this.debugModeButton.setText("Debug: on");
+		} else {
+			this.debugModeButton.setText("Debug: off");
+		}
+	}
 	
 	@Override
 	public void update(Observable o, Object arg) {
@@ -168,6 +206,27 @@ public class Checkers_GUI extends JFrame implements Observer {
 		messageLabel.setText("The winner is: " + this.checkersPanel.getWinner());
 	}
 
+	private void startNewGame(GameMode mode) {
+		if (this.aiMode) {
+			if(Checkers_GUI.debug) {
+				System.out.println("Starting an AI game");
+			}
+			checkersPanel.newGameAI(player1Name.getText(), mode);
+		} else {
+			if(Checkers_GUI.debug) {
+				System.out.println("Starting a normal game");
+			}
+			checkersPanel.newGame(player1Name.getText(), player2Name.getText(), mode);
+		}
+		this.newGameVsAIButton.setVisible(false);
+		this.newGameButton.setVisible(false);
+		this.freeGameMode.setVisible(false);
+		this.gameTimedMode.setVisible(false);
+		this.turnTimedMode.setVisible(false);
+		this.backButton.setVisible(false);
+		this.concedeButton.setVisible(true);
+		messageLabel.setText("Welcome to Checkers!");
+	}
 
 	private class ButtonListener implements ActionListener {
 
@@ -175,30 +234,69 @@ public class Checkers_GUI extends JFrame implements Observer {
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			if (src == newGameButton) {
-				checkersPanel.newGame(player1Name.getText(), player2Name.getText());
-				concedeButton.setVisible(true);
+				aiMode = false;
 				newGameButton.setVisible(false);
 				newGameVsAIButton.setVisible(false);
-				messageLabel.setText("Welcome to Checkers!");
+				freeGameMode.setVisible(true);
+				gameTimedMode.setVisible(true);
+				turnTimedMode.setVisible(true);
+				backButton.setVisible(true);
+				concedeButton.setVisible(false);
+				if(Checkers_GUI.debug) {
+					System.out.println("Against AI: " + aiMode);
+				}
+
+			} else if (src == freeGameMode) {
+				if(Checkers_GUI.debug) {
+					System.out.println("Against AI: " + aiMode);
+				}
+				startNewGame(GameMode.FREE_MODE);
+			}
+			else if (src == gameTimedMode) {
+				if(Checkers_GUI.debug) {
+					System.out.println("Against AI: " + aiMode);
+				}
+				startNewGame(GameMode.GAME_TIMED_MODE);
+			}
+			else if(src == turnTimedMode) {
+				if(Checkers_GUI.debug) {
+					System.out.println("Against AI: " + aiMode);
+				}
+				startNewGame(GameMode.TURN_TIMED_MODE);
 			}
 			else if (src == concedeButton) {
 				checkersPanel.endGame();
 				newGameVsAIButton.setVisible(true);
 				newGameButton.setVisible(true);
 				concedeButton.setVisible(false);
-			}
-			else if(src == newGameVsAIButton) {
-				checkersPanel.newGameAI(player1Name.getText());;
-				concedeButton.setVisible(true);
+			} else if (src == newGameVsAIButton) {
+				aiMode = true;
 				newGameButton.setVisible(false);
 				newGameVsAIButton.setVisible(false);
-				messageLabel.setText("Welcome to Checkers!");
-			}
-			else if(src == scoreboardButton) {
+				freeGameMode.setVisible(true);
+				gameTimedMode.setVisible(true);
+				turnTimedMode.setVisible(true);
+				backButton.setVisible(true);
+				concedeButton.setVisible(false);
+				if(Checkers_GUI.debug) {
+					System.out.println("Against AI: " + aiMode);
+				}
+			} else if (src == scoreboardButton) {
 				new ScoreBoardFrame(checkersPanel.getData());
-			}
-			else if(src == changeName) {
+			} else if (src == changeName) {
 				checkersPanel.setPlayersNames(player1Name.getText(), player2Name.getText());
+			}
+			else if (src == backButton) {
+				newGameButton.setVisible(true);
+				newGameVsAIButton.setVisible(true);
+				freeGameMode.setVisible(false);
+				gameTimedMode.setVisible(false);
+				turnTimedMode.setVisible(false);
+				backButton.setVisible(false);
+				concedeButton.setVisible(false);
+			}
+			else if (src == debugModeButton) {
+				changeDebugMode();
 			}
 		}
 	}
@@ -212,15 +310,17 @@ public class Checkers_GUI extends JFrame implements Observer {
 		}
 
 		@Override
-		public void componentMoved(ComponentEvent e) {}
+		public void componentMoved(ComponentEvent e) {
+		}
 
 		@Override
-		public void componentShown(ComponentEvent e) {}
+		public void componentShown(ComponentEvent e) {
+		}
 
 		@Override
-		public void componentHidden(ComponentEvent e) {}
+		public void componentHidden(ComponentEvent e) {
+		}
 
 	}
-
 
 }

@@ -26,11 +26,11 @@ public class ScoreBoardData {
 		turnNames = new ArrayList<String>();
 		turnTimes = new ArrayList<Integer>();
 		try {
+			Paths.get("/GameData/").toFile().mkdirs();
 			createPath(GameMode.FREE_MODE).toFile().createNewFile();
 			createPath(GameMode.GAME_TIMED_MODE).toFile().createNewFile();
 			createPath(GameMode.TURN_TIMED_MODE).toFile().createNewFile();
-		}
-		catch(IOException x) {
+		} catch (IOException x) {
 			System.err.format("IOException: %s%n", x);
 		}
 
@@ -39,16 +39,13 @@ public class ScoreBoardData {
 	public String[] getNames(GameMode gameMode) {
 		String[] result;
 		if (gameMode == GameMode.FREE_MODE) {
-			if(Checkers_GUI.debug) {
-				System.out.println("here");
-			}
 			result = convertToStringArray(this.freeNames);
 		}
 		if (gameMode == GameMode.GAME_TIMED_MODE)
 			result = convertToStringArray(this.normalNames);
 		else
 			result = convertToStringArray(this.turnNames);
-		if(Checkers_GUI.debug) {
+		if (Checkers_GUI.debug) {
 			this.debugPrintArray(result);
 		}
 		return result;
@@ -70,7 +67,7 @@ public class ScoreBoardData {
 	}
 
 	public void setScores(String name, int time, GameMode gameMode) {
-		if(Checkers_GUI.debug) {
+		if (Checkers_GUI.debug) {
 			System.out.println("TESTING FOR SCOREBOARD\nName: " + name + " Time: " + time);
 		}
 		boolean changed;
@@ -87,17 +84,17 @@ public class ScoreBoardData {
 		}
 	}
 
-	private boolean makeScores(String name, int time, ArrayList<String> names, ArrayList<Integer> times) {	
-		if(times.size() == 0 && names.size() == 0) {
+	private boolean makeScores(String name, int time, ArrayList<String> names, ArrayList<Integer> times) {
+		if (times.size() == 0 && names.size() == 0) {
 			times.add(new Integer(time));
 			names.add(name);
 		}
-		if(Checkers_GUI.debug) {
+		if (Checkers_GUI.debug) {
 			System.out.println("Looking into the scoreboard of size: " + times.size());
 		}
 		for (int i = 0; i < times.size(); i++) {
 			if (time < times.get(i).intValue()) {
-				if(Checkers_GUI.debug) {
+				if (Checkers_GUI.debug) {
 					System.out.println("Name: " + name + " Time: " + time + " Position: " + i);
 				}
 				times.add(i, new Integer(time));
@@ -130,13 +127,30 @@ public class ScoreBoardData {
 	// https://docs.oracle.com/javase/tutorial/essential/io/file.html#common
 	private void saveToFile(GameMode gameMode) {
 		Charset charset = Charset.forName("US-ASCII");
-		String s = makeDataString(gameMode);
+		ArrayList<String> names;
+		ArrayList<Integer> times;
+		if (gameMode == GameMode.FREE_MODE) {
+			names = this.freeNames;
+			times = this.freeTimes;
+		} else if (gameMode == GameMode.GAME_TIMED_MODE) {
+			names = this.normalNames;
+			times = this.normalTimes;
+		} else {
+			names = this.turnNames;
+			times = this.turnTimes;
+		}
+		String s;
 		try {
 			if (!createPath(gameMode).toFile().exists()) {
 				createPath(gameMode).toFile().createNewFile();
 			}
 			BufferedWriter writer = Files.newBufferedWriter(createPath(gameMode), charset);
-			writer.write(s, 0, s.length());
+			for (int i = 0; i < names.size(); i++) {
+				s = makeDataString(names, times, i);
+				writer.write(s, 0, s.length());
+				writer.newLine();
+			}
+			writer.close();
 		} catch (IOException x) {
 			System.err.format("IOException: %s%n", x);
 		}
@@ -152,17 +166,18 @@ public class ScoreBoardData {
 		try (BufferedReader reader = Files.newBufferedReader(createPath(gameMode), charset)) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				if(Checkers_GUI.debug) {
+				if (Checkers_GUI.debug) {
 					System.out.println(line);
 				}
 				line = line.trim();
-				tempBuffer = line.split(" ", 2);
-				if(Checkers_GUI.debug) {
+				tempBuffer = line.split("\t", 2);
+				if (Checkers_GUI.debug) {
 					System.out.println("Name on File: " + tempBuffer[0] + "\nTime on File: " + tempBuffer[1]);
 				}
 				tempNames.add(tempBuffer[0]);
 				tempTimes.add(new Integer(Integer.parseInt(tempBuffer[1])));
 			}
+			reader.close();
 			if (gameMode == GameMode.FREE_MODE) {
 				this.freeNames = tempNames;
 				this.freeTimes = tempTimes;
@@ -178,41 +193,12 @@ public class ScoreBoardData {
 		}
 	}
 
-	private String makeDataString(GameMode gameMode) {
+	private String makeDataString(ArrayList<String> names, ArrayList<Integer> times, int index) {
 		String result = "";
-		ArrayList<String> names;
-		ArrayList<Integer> times;
-		if (gameMode == GameMode.FREE_MODE) {
-			names = this.freeNames;
-			times = this.freeTimes;
-		} else if (gameMode == GameMode.GAME_TIMED_MODE) {
-			names = this.normalNames;
-			times = this.normalTimes;
-		} else {
-			names = this.turnNames;
-			times = this.turnTimes;
-		}
-		int minutes;
-		int seconds;
-		for (int i = 0; i < names.size(); i++) {
-			result += names.get(i);
-			result += "\t\t";
-			minutes = times.get(i).intValue() / 60;
-			if (minutes < 10) {
-				result += ("0" + minutes);
-			} else {
-				result += minutes;
-			}
-			result += ":";
-			seconds = times.get(i).intValue() % 60;
-			if (seconds < 10) {
-				result += ("0" + seconds);
-			} else {
-				result += seconds;
-			}
-			result += "/n";
-		}
-		if(Checkers_GUI.debug) {
+		result += names.get(index);
+		result += "\t";
+		result += times.get(index).intValue();
+		if (Checkers_GUI.debug) {
 			System.out.println(result);
 		}
 		return result;
@@ -221,7 +207,7 @@ public class ScoreBoardData {
 	private int[] convertToIntArray(ArrayList<Integer> list) {
 		int[] result = new int[list.size()];
 		for (int i = 0; i < list.size(); i++) {
-			if(Checkers_GUI.debug) {
+			if (Checkers_GUI.debug) {
 				System.out.println("Converted value: " + list.get(i));
 			}
 			result[i] = list.get(i).intValue();
@@ -231,17 +217,17 @@ public class ScoreBoardData {
 
 	private String[] convertToStringArray(ArrayList<String> list) {
 		String[] result = new String[list.size()];
-		for (int i = 0; i < list.size(); i++) {	
+		for (int i = 0; i < list.size(); i++) {
 			result[i] = list.get(i);
-			if(Checkers_GUI.debug) {
+			if (Checkers_GUI.debug) {
 				System.out.println("Converted value: " + result[i]);
 			}
 		}
 		return result;
 	}
-	
+
 	private void debugPrintArray(String[] arr) {
-		for(String s: arr) {
+		for (String s : arr) {
 			System.out.println(s);
 		}
 	}
