@@ -6,6 +6,8 @@ import java.util.Observer;
 
 public class Game extends Observable implements Observer {
 
+	private final int FREE_TIMED_MODE = 3600;
+	
 	private final int GAME_TIMED_MODE = 300;
 
 	private final int TURN_TIMED_MODE = 20;
@@ -181,7 +183,7 @@ public class Game extends Observable implements Observer {
 			this.time++;
 
 			//The free game mode still has a time limit of 60 minutes.
-			if (time >= 3600) {
+			if (time >= this.FREE_TIMED_MODE) {
 				setChanged();
 				notifyObservers();
 			}
