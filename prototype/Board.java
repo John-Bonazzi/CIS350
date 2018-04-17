@@ -109,13 +109,6 @@ public class Board extends Observable {
 		return hasJumped;
 	}
 
-	public ColorStatus getColor(int row, int col) {
-		if (checkBounds(row) || checkBounds(col))
-			return ColorStatus.EMPTY;
-
-		return this.board[row][col];
-	}
-
 	public boolean[][] canSelect(Player player) {
 		ColorStatus playerColor = player.playerColor();
 		ColorStatus checkerKing = player.kingColor();

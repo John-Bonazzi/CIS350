@@ -42,34 +42,6 @@ public class Game extends Observable implements Observer {
 	}
 
 	/***************************************************************
-	 * Constructor for a Game object. The Game object contains the game's actors,
-	 * namely the two players, and has a field variable indicating whether the game
-	 * is running or not.
-	 ***************************************************************/
-	public Game() {
-		this.gameRunning = true;
-		players.add(new Player("White", ColorStatus.WHITE));
-		players.add(new Player("Black", ColorStatus.BLACK));
-		this.currentPlayer = ColorStatus.WHITE;
-		setTime();
-	}
-
-	/***************************************************************
-	 * Overloaded constructor that let the player decide its color when playing
-	 * against the computer.
-	 * 
-	 * @param playerColor
-	 *            the user's choice of color.
-	 ***************************************************************/
-	public Game(ColorStatus playerColor) {
-		this.players.clear(); // Make sure the array is empty.
-		this.gameRunning = true;
-		players.add(new Player("Player", playerColor));
-		this.currentPlayer = ColorStatus.WHITE;
-		setTime();
-	}
-
-	/***************************************************************
 	 * Get method for the list of players.
 	 * 
 	 * @return The list of players.

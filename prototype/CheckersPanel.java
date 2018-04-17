@@ -230,26 +230,6 @@ public class CheckersPanel extends JPanel implements Observer{
 		this.options = this.board.setAllFalse();
 		repaint();		
 	}
-	/*
-	 * prints out misc. debug information.
-	 */
-	public void paintDebug() {
-		g.setColor(Color.RED);
-		g.fillRect(0, 0, (int) size.getWidth(), (int) size.getHeight());
-		g.fillRect(0, 0, size.width, size.height);
-
-		g.drawLine(boardX, 0, boardX, size.height);
-		g.drawLine(boardWidth + boardX, 0, boardWidth + boardX, size.height);
-
-		g.drawLine(0, boardY, size.width, boardY);
-		g.drawLine(0, boardHeight + boardY, size.width, boardHeight + boardY);
-
-		int posx, posy;
-		posx = 1;
-		posy = 2;
-		highlightSquare(posx, posy, Color.RED);
-		System.out.println(board.canMove(ColorStatus.BLACK, ColorStatus.BLACK_KING, posx, posy));
-	}
 
 	private void makeAIturn() {
 		//Making sure that is never called by error in a player vs player game.
