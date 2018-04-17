@@ -21,14 +21,13 @@ public class Game extends Observable implements Observer {
 
 	private int time;
 
-	private int gameMode = 0;
+	private GameMode gameMode = GameMode.FREE_MODE;
 
 	public Game(CheckersPanel panel, Checkers_GUI gui, boolean againstAI) {
 		players = new ArrayList<Player>();
 		this.addObserver(panel);
 		this.addObserver(gui);
 		this.gameRunning = true;
-		this.gameMode = 0;
 		players.add(new Player("White", ColorStatus.WHITE));
 		if(againstAI) {
 			players.add(new CheckersAI(ColorStatus.BLACK));
@@ -47,7 +46,6 @@ public class Game extends Observable implements Observer {
 	 ***************************************************************/
 	public Game() {
 		this.gameRunning = true;
-		this.gameMode = 0;
 		players.add(new Player("White", ColorStatus.WHITE));
 		players.add(new Player("Black", ColorStatus.BLACK));
 		this.currentPlayer = ColorStatus.WHITE;
@@ -64,7 +62,6 @@ public class Game extends Observable implements Observer {
 	public Game(ColorStatus playerColor) {
 		this.players.clear(); // Make sure the array is empty.
 		this.gameRunning = true;
-		this.gameMode = 0;
 		players.add(new Player("Player", playerColor));
 		this.currentPlayer = ColorStatus.WHITE;
 		setTime();
@@ -112,8 +109,8 @@ public class Game extends Observable implements Observer {
 		notifyObservers();
 	}
 
-	public void setGameMode(int option) {
-		this.gameMode = option % 3;
+	public void setGameMode(GameMode option) {
+		this.gameMode = option;
 	}
 
 	public void startGameAI(String name1) {
@@ -160,7 +157,7 @@ public class Game extends Observable implements Observer {
 		} else if (this.currentPlayer == ColorStatus.BLACK) {
 			this.currentPlayer = ColorStatus.WHITE;
 		}
-		if(this.gameMode == 2) {
+		if(this.gameMode == GameMode.TURN_TIMED_MODE) {
 			
 			//the plus one is to show the 20 seconds on the timer.
 			this.time = this.TURN_TIMED_MODE + 1;
@@ -172,7 +169,7 @@ public class Game extends Observable implements Observer {
 	}
 
 	public void updateTime() {
-		if (this.gameMode == 0) {
+		if (this.gameMode == GameMode.FREE_MODE) {
 			this.time++;
 
 			//The free game mode still has a time limit of 60 minutes.
@@ -197,9 +194,9 @@ public class Game extends Observable implements Observer {
 	}
 
 	private void setTime() {
-		if (gameMode == 0) {
+		if (gameMode == GameMode.FREE_MODE) {
 			this.time = 0;
-		} else if (gameMode == 1) {
+		} else if (gameMode == GameMode.GAME_TIMED_MODE) {
 			this.time = this.GAME_TIMED_MODE;
 		} else {
 			this.time = this.TURN_TIMED_MODE;

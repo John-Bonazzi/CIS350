@@ -27,14 +27,11 @@ public class ScoreBoardData {
 		return convertToIntArray(this.times);
 	}
 
-	public void updateScores(int gameMode) {
-
-		// the absolute value and the % 3 prevents the program from misbehaving and
-		// crash if a wrong value is passed.
-		loadFromFile(createPath(Math.abs(gameMode % 3)));
+	public void updateScores(GameMode gameMode) {
+		loadFromFile(createPath(gameMode));
 	}
 
-	public void setScores(String name, int time, int gameMode) {
+	public void setScores(String name, int time, GameMode gameMode) {
 		Integer newTime = new Integer(time);
 		boolean changed = false;
 		for (int i = 0; i < TOP_TEN; i++) {
@@ -50,15 +47,15 @@ public class ScoreBoardData {
 		if (changed) {
 			// the absolute value and the % 3 prevents the program from misbehaving and
 			// crash if a wrong value is passed.
-			saveToFile(createPath(Math.abs(gameMode % 3)));
+			saveToFile(createPath(gameMode));
 		}
 	}
 
-	private Path createPath(int gameMode) {
+	private Path createPath(GameMode gameMode) {
 		Path p;
-		if (gameMode == 0) {
+		if (gameMode == GameMode.FREE_MODE) {
 			p = Paths.get("../GameData/FreeMode");
-		} else if (gameMode == 1) {
+		} else if (gameMode == GameMode.GAME_TIMED_MODE) {
 			p = Paths.get("../GameData/GameTimedMode");
 		} else {
 			p = Paths.get("../GameData/TurnTimedMode");

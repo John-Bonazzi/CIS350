@@ -23,7 +23,6 @@ public class CheckersPanel extends JPanel implements Observer{
 	private Board board;
 	private Game game;
 	private ColorStatus[][] checkerColor;
-	private Player winner;
 	private int boardX, boardY;
 	private int boardWidth, boardHeight;
 	private int tileSize;
@@ -39,7 +38,7 @@ public class CheckersPanel extends JPanel implements Observer{
 	public CheckersPanel(int xSize, int ySize, Checkers_GUI gui) {
 		size = new Dimension(xSize, ySize);
 		this.setPreferredSize(size);
-		this.againstAI = false;
+		this.againstAI = true;
 		this.parentFrame = gui;
 		// this.setBackground(Color.RED);
 		this.game = new Game(this, gui, this.againstAI);
@@ -193,7 +192,6 @@ public class CheckersPanel extends JPanel implements Observer{
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		this.winner = game.getCurrentPlayer();
 		resetGame();		
 	}
 
@@ -308,13 +306,16 @@ public class CheckersPanel extends JPanel implements Observer{
 							} else {
 								didJump = board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row,
 										col);
+								if(didJump) {
+									this.originalRow = row;
+									this.originalCol = col;
+								}
 							}
 
 							// If there was a jump, and the same checker can jump again, show the moves for
 							// that checker only
 							if (didJump && board.canJump(game.getCurrentPlayer().playerColor(),
-									game.getCurrentPlayer().kingColor(), row, col)) {
-								//canMove = board.canSelect(game.getCurrentPlayer());
+									game.getCurrentPlayer().kingColor(), this.originalRow, this.originalCol)) {
 								options = board.showDoubleJumpOptions(game.getCurrentPlayer(), row, col);
 								this.originalCol = col;
 								this.originalRow = row;
