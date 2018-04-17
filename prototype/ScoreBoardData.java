@@ -169,7 +169,7 @@ public class ScoreBoardData {
 					System.out.println(line);
 				}
 				line = line.trim();
-				tempBuffer = line.split("\t", 2);
+				tempBuffer = line.split(" ", 2);
 				if (Checkers_GUI.debug) {
 					System.out.println("Name on File: " + tempBuffer[0] + "\nTime on File: " + tempBuffer[1]);
 				}
@@ -195,7 +195,7 @@ public class ScoreBoardData {
 	private String makeDataString(ArrayList<String> names, ArrayList<Integer> times, int index) {
 		String result = "";
 		result += names.get(index);
-		result += "\t";
+		result += " ";
 		result += times.get(index).intValue();
 		if (Checkers_GUI.debug) {
 			System.out.println(result);
@@ -222,12 +222,15 @@ public class ScoreBoardData {
 				System.out.println("Converted value: " + result[i]);
 			}
 		}
+		if(Checkers_GUI.debug) {
+			debugPrintArray(result);
+		}
 		return result;
 	}
 
 	private void debugPrintArray(String[] arr) {
-		for (String s : arr) {
-			System.out.println(s);
+		for(int i = 0; i < arr.length; i++) {
+			System.out.println("String at index " + i + ": " + arr[i]);
 		}
 	}
 }

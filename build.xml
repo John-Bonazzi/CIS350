@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="checkersPrototype" default="compile" basedir=".">
-	<property name="src" value="src/prototype"/>
+	<property name="src" value="src"/>
 	<property name="build" value="build"/>
 	
 		<property name="build.classes" value="${build}/classes"/>
