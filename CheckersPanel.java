@@ -32,14 +32,16 @@ public class CheckersPanel extends JPanel implements Observer{
 	private Timer gameTimer;
 
 	private Graphics g;
+	
+	private boolean againstAI;
 
 	public CheckersPanel(int xSize, int ySize, Checkers_GUI gui) {
 		size = new Dimension(xSize, ySize);
 		this.setPreferredSize(size);
-		
+		this.againstAI = false;
 		this.parentFrame = gui;
 		// this.setBackground(Color.RED);
-		this.game = new Game(this, gui);
+		this.game = new Game(this, gui, this.againstAI);
 		this.board = new Board(this.game);
 		this.initBoard();
 		this.addMouseListener(new MListener());
@@ -49,6 +51,15 @@ public class CheckersPanel extends JPanel implements Observer{
 		this.gameTimer.start();
 	}
 
+	public void newGameAI(String player) {
+		this.againstAI = true;
+		this.game.startGameAI(player);
+		this.board = new Board(this.game);
+		this.options = board.canSelect(game.getCurrentPlayer());
+		this.gameTimer = new Timer(TIMER_DELAY, new TimerListener());
+		this.gameTimer.start();
+	}
+	
 	private void initBoard() {
 
 		int centerX = (int) (this.size.getWidth() / 2);
@@ -220,6 +231,18 @@ public class CheckersPanel extends JPanel implements Observer{
 		System.out.println(board.canMove(ColorStatus.BLACK, ColorStatus.BLACK_KING, posx, posy));
 	}
 
+	private void makeAIturn() {
+		//Making sure that is never called by error in a player vs player game.
+		if(this.againstAI && this.game.isGameRunning()) {
+			CheckersAI AI = (CheckersAI) game.getCurrentPlayer();
+			AI.makeMove(this.board, this.options);
+			this.game.nextPlayer();
+			this.canMove = board.canSelect(game.getCurrentPlayer());
+			this.options = canMove;
+			repaint();
+		}
+	}
+	
 	private class MListener implements MouseListener {
 
 		private boolean first = true;
@@ -294,6 +317,12 @@ public class CheckersPanel extends JPanel implements Observer{
 								options = canMove;
 								this.first = true;
 								this.didJump = false;
+								if(againstAI) {
+									//Assuming that the human player is always the white one.
+									if(game.getCurrentPlayer().playerColor() != ColorStatus.WHITE) {
+										makeAIturn();
+									}
+								}
 							}
 						}
 					}

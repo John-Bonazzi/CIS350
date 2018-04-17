@@ -21,16 +21,21 @@ public class Game extends Observable implements Observer {
 
 	private int time;
 
-	private int gameMode;
+	private int gameMode = 0;
 
-	public Game(CheckersPanel panel, Checkers_GUI gui) {
+	public Game(CheckersPanel panel, Checkers_GUI gui, boolean againstAI) {
 		players = new ArrayList<Player>();
 		this.addObserver(panel);
 		this.addObserver(gui);
 		this.gameRunning = true;
 		this.gameMode = 0;
 		players.add(new Player("White", ColorStatus.WHITE));
-		players.add(new Player("Black", ColorStatus.BLACK));
+		if(againstAI) {
+			players.add(new CheckersAI(ColorStatus.BLACK));
+		}
+		else {
+			players.add(new Player("Black", ColorStatus.BLACK));
+		}
 		this.currentPlayer = ColorStatus.WHITE;
 		setTime();
 	}
@@ -116,7 +121,7 @@ public class Game extends Observable implements Observer {
 		this.gameRunning = true;
 		this.players.clear();
 		players.add(new Player(name1, ColorStatus.WHITE));
-		players.add(new checkerAI(ColorStatus.BLACK));
+		players.add(new CheckersAI(ColorStatus.BLACK));
 		this.currentPlayer = ColorStatus.WHITE;
 		setChanged();
 		notifyObservers();
