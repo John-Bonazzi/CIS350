@@ -1,35 +1,26 @@
 <?xml version="1.0"?>
-<project name="prototype" default="all" basedir=".">
-  <property name="src"   value="src"/>
-  <property name="build" value="build"/>
-  <property name="lib"   value="lib"/>
+<project name="checkersPrototype" default="compile" basedir=".">
+	<property name="src" value="src/prototype"/>
+	<property name="build" value="build"/>
+	
+		<property name="build.classes" value="${build}/classes"/>
+  		<property name="build.lib" value="${build}/lib"/>
 
-<target name="all" depends="clean, compile, run" description="Builds the whole project">
-    <echo>Doing all</echo>
-  </target>
-
-<target name="Clean" description="Removes previous build">
-    <delete verbose="true">
-      <fileset dir="${build}"/>
-    </delete>
-  </target>
-
-<target name="compile" depends="clean" description="compile whole project">
-    <echo>compile ${ant.project.name} </echo>
-    <javac srcdir="${src}" destdir="${build}" includes="GameisRunningException.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="MListener.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="ColorStatus.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="Player.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="checkerAI.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="Board.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="Game.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="CheckersPanel.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="Checkers_GUI.java"/>
-    <javac srcdir="${src}" destdir="${build}" includes="Checkers.java"/>
-  </target>
-
-<target name="run" depends="compile">
-       <java classname="Checkers" fork="true"></java>
-</target>
-
+	<target name="init" >
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build.classes}"/>
+		<mkdir dir="${build.lib}"/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${build.classes}"/>
+	</target>
+	
+	<target name="clean" description="Remove all generated files.">
+		<delete dir="${build}"/>
+	</target>
+	
+	<target name="jar" depends="compile" description="Generates all executables.">
+		<jar jarfile="${build.lib}/Checkers.jar" manifest="manifest.mf"  basedir="${build.classes}"/>
+	</target>
 </project>

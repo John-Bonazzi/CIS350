@@ -26,7 +26,6 @@ public class ScoreBoardData {
 		turnNames = new ArrayList<String>();
 		turnTimes = new ArrayList<Integer>();
 		try {
-			Paths.get("/GameData/").toFile().mkdirs();
 			createPath(GameMode.FREE_MODE).toFile().createNewFile();
 			createPath(GameMode.GAME_TIMED_MODE).toFile().createNewFile();
 			createPath(GameMode.TURN_TIMED_MODE).toFile().createNewFile();
