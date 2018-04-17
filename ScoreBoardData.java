@@ -32,14 +32,17 @@ public class ScoreBoardData {
 	}
 
 	public void setScores(String name, int time, GameMode gameMode) {
-		Integer newTime = new Integer(time);
 		boolean changed = false;
-		for (int i = 0; i < TOP_TEN; i++) {
-			if (newTime.intValue() < this.times.get(i).intValue()) {
-				this.times.add(i, newTime);
+		for (int i = 0; i < this.times.size(); i++) {
+			if (time < this.times.get(i).intValue()) {
+				this.times.add(i, new Integer(time));
 				this.names.add(i, name);
-				this.times.remove(TOP_TEN);
-				this.names.remove(TOP_TEN);
+				while(this.times.size() > TOP_TEN) {
+					this.times.remove(TOP_TEN);
+				}
+				while(this.names.size() > TOP_TEN) {
+					this.names.remove(TOP_TEN);
+				}
 				changed = true;
 				break;
 			}
@@ -99,7 +102,7 @@ public class ScoreBoardData {
 		String result = "";
 		int minutes;
 		int seconds;
-		for(int i = 0; i < this.TOP_TEN; i++) {
+		for(int i = 0; i < this.names.size(); i++) {
 			result += this.names.get(i);
 			result += "\t\t";
 			minutes = this.times.get(i).intValue() / 60;
