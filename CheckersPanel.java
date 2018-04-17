@@ -197,6 +197,7 @@ public class CheckersPanel extends JPanel implements Observer{
 
 	public void newGame(String player1, String player2) {
 		game.startGame(player1, player2);
+		this.againstAI = false;
 		this.board = new Board(this.game);
 		this.options = board.canSelect(game.getCurrentPlayer());
 		this.gameTimer = new Timer(TIMER_DELAY, new TimerListener());

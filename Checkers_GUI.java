@@ -79,8 +79,9 @@ public class Checkers_GUI extends JFrame implements Observer {
 		controlPanel.add(scoreboardButton);
 		controlPanel.add(concedeButton);
 
-		newGameButton.addActionListener(new ButtonListener());
-		concedeButton.addActionListener(new ButtonListener());
+		this.newGameButton.addActionListener(new ButtonListener());
+		this.concedeButton.addActionListener(new ButtonListener());
+		this.newGameVsAIButton.addActionListener(new ButtonListener());
 
 		newGameButton.setVisible(false);
 		newGameVsAIButton.setVisible(false);
@@ -172,12 +173,21 @@ public class Checkers_GUI extends JFrame implements Observer {
 				checkersPanel.newGame(player1Name.getText(), player2Name.getText());
 				concedeButton.setVisible(true);
 				newGameButton.setVisible(false);
+				newGameVsAIButton.setVisible(false);
 				messageLabel.setText("Welcome to Checkers!");
 			}
 			else if (src == concedeButton) {
 				checkersPanel.endGame();
+				newGameVsAIButton.setVisible(true);
 				newGameButton.setVisible(true);
 				concedeButton.setVisible(false);
+			}
+			else if(src == newGameVsAIButton) {
+				checkersPanel.newGameAI(player1Name.getText());;
+				concedeButton.setVisible(true);
+				newGameButton.setVisible(false);
+				newGameVsAIButton.setVisible(false);
+				messageLabel.setText("Welcome to Checkers!");
 			}
 		}
 	}
