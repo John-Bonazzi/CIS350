@@ -194,6 +194,7 @@ public class Checkers_GUI extends JFrame implements Observer {
 		} else {
 			this.debugModeButton.setText("Debug: off");
 		}
+		this.checkersPanel.repaint();
 	}
 	
 	@Override
