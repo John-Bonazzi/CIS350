@@ -40,7 +40,7 @@ public class Checkers_GUI extends JFrame implements Observer {
 	/*
 	 * JComponents for the control panel.
 	 */
-	private JButton newGameButton, concedeButton, newGameVsAIButton, scoreboardButton;
+	private JButton newGameButton, concedeButton, newGameVsAIButton;
 
 	private JButton debugModeButton, backButton;
 	private JButton freeGameMode, gameTimedMode, turnTimedMode;
@@ -79,7 +79,6 @@ public class Checkers_GUI extends JFrame implements Observer {
 	private void controlPanelInit() {
 		newGameButton = new JButton("New Game vs Player");
 		newGameVsAIButton = new JButton("New Game vs AI");
-		scoreboardButton = new JButton("Display Scoreboard");
 		concedeButton = new JButton("Concede Game");
 		this.freeGameMode = new JButton("Free Mode");
 		this.gameTimedMode = new JButton("Timed Game");
@@ -92,7 +91,6 @@ public class Checkers_GUI extends JFrame implements Observer {
 			this.debugModeButton.setText("Debug: off");
 		}
 
-		controlPanel.add(this.scoreboardButton);
 		controlPanel.add(this.concedeButton);
 		controlPanel.add(this.debugModeButton);
 		controlPanel.add(this.newGameButton);
@@ -105,7 +103,6 @@ public class Checkers_GUI extends JFrame implements Observer {
 		this.newGameButton.addActionListener(new ButtonListener());
 		this.concedeButton.addActionListener(new ButtonListener());
 		this.newGameVsAIButton.addActionListener(new ButtonListener());
-		this.scoreboardButton.addActionListener(new ButtonListener());
 		this.changeName.addActionListener(new ButtonListener());
 		this.debugModeButton.addActionListener(new ButtonListener());
 		this.freeGameMode.addActionListener(new ButtonListener());
@@ -281,9 +278,8 @@ public class Checkers_GUI extends JFrame implements Observer {
 				if(Checkers_GUI.debug) {
 					System.out.println("Against AI: " + aiMode);
 				}
-			} else if (src == scoreboardButton) {
-				new ScoreBoardFrame(checkersPanel.getData());
-			} else if (src == changeName) {
+			}
+			else if (src == changeName) {
 				checkersPanel.setPlayersNames(player1Name.getText(), player2Name.getText());
 			}
 			else if (src == backButton) {
