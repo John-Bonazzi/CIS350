@@ -76,6 +76,14 @@ public class Game extends Observable implements Observer {
 		return players;
 	}
 
+	public void setNames(String player1, String player2) {
+		this.players.get(0).setName(player1);
+		this.players.get(1).setName(player2);
+	}
+	
+	public GameMode getMode() {
+		return this.gameMode;
+	}
 	/***************************************************************
 	 * Get method for the gameRunning field. The value indicates whether the game is
 	 * currently running or not. Note that the game is limited to the board, not the

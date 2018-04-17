@@ -62,8 +62,11 @@ public class Checkers_GUI extends JFrame implements Observer {
 
 		// add the JPanel that contains all the others.
 		this.add(mainPanel);
+		
 		// Allows the x button to close the window.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.pack();
+		this.setLocationRelativeTo(null);
 	}
 
 	// private JButton newGameButton, concedeButton, newGameVsAIButton,
@@ -82,6 +85,8 @@ public class Checkers_GUI extends JFrame implements Observer {
 		this.newGameButton.addActionListener(new ButtonListener());
 		this.concedeButton.addActionListener(new ButtonListener());
 		this.newGameVsAIButton.addActionListener(new ButtonListener());
+		this.scoreboardButton.addActionListener(new ButtonListener());
+		this.changeName.addActionListener(new ButtonListener());
 
 		newGameButton.setVisible(false);
 		newGameVsAIButton.setVisible(false);
@@ -94,8 +99,8 @@ public class Checkers_GUI extends JFrame implements Observer {
 	private void statsPanelInit() {
 		messageLabel = new JLabel("Welcome to Checkers!");
 		timeDisplay = new JLabel("00:00");
-		player1Name = new JTextField("Player 1", 12);
-		player2Name = new JTextField("Player 2", 12);
+		player1Name = new JTextField("White", 12);
+		player2Name = new JTextField("Black", 12);
 		changeName = new JButton("Change Name");
 
 		JPanel messagePane = new JPanel();
@@ -188,6 +193,12 @@ public class Checkers_GUI extends JFrame implements Observer {
 				newGameButton.setVisible(false);
 				newGameVsAIButton.setVisible(false);
 				messageLabel.setText("Welcome to Checkers!");
+			}
+			else if(src == scoreboardButton) {
+				new ScoreBoardFrame(checkersPanel.getData());
+			}
+			else if(src == changeName) {
+				checkersPanel.setPlayersNames(player1Name.getText(), player2Name.getText());
 			}
 		}
 	}

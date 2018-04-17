@@ -11,123 +11,219 @@ import java.util.ArrayList;
 
 public class ScoreBoardData {
 	private final int TOP_TEN = 10;
-	private ArrayList<String> names;
-	private ArrayList<Integer> times;
+	private ArrayList<String> freeNames;
+	private ArrayList<Integer> freeTimes;
+	private ArrayList<String> normalNames;
+	private ArrayList<Integer> normalTimes;
+	private ArrayList<String> turnNames;
+	private ArrayList<Integer> turnTimes;
 
 	public ScoreBoardData() {
-		names = new ArrayList<String>();
-		times = new ArrayList<Integer>();
+		freeNames = new ArrayList<String>();
+		freeTimes = new ArrayList<Integer>();
+		normalNames = new ArrayList<String>();
+		normalTimes = new ArrayList<Integer>();
+		turnNames = new ArrayList<String>();
+		turnTimes = new ArrayList<Integer>();
+		try {
+			createPath(GameMode.FREE_MODE).toFile().createNewFile();
+			createPath(GameMode.GAME_TIMED_MODE).toFile().createNewFile();
+			createPath(GameMode.TURN_TIMED_MODE).toFile().createNewFile();
+		}
+		catch(IOException x) {
+			System.err.format("IOException: %s%n", x);
+		}
+
 	}
 
-	public String[] getNames() {
-		return convertToStringArray(this.names);
+	public String[] getNames(GameMode gameMode) {
+		String[] result;
+		if (gameMode == GameMode.FREE_MODE) {
+			if(Checkers_GUI.debug) {
+				System.out.println("here");
+			}
+			result = convertToStringArray(this.freeNames);
+		}
+		if (gameMode == GameMode.GAME_TIMED_MODE)
+			result = convertToStringArray(this.normalNames);
+		else
+			result = convertToStringArray(this.turnNames);
+		if(Checkers_GUI.debug) {
+			this.debugPrintArray(result);
+		}
+		return result;
 	}
 
-	public int[] getTimes() {
-		return convertToIntArray(this.times);
+	public int[] getTimes(GameMode gameMode) {
+		int[] result;
+		if (gameMode == GameMode.FREE_MODE)
+			result = convertToIntArray(this.freeTimes);
+		if (gameMode == GameMode.GAME_TIMED_MODE)
+			result = convertToIntArray(this.normalTimes);
+		else
+			result = convertToIntArray(this.turnTimes);
+		return result;
 	}
 
 	public void updateScores(GameMode gameMode) {
-		loadFromFile(createPath(gameMode));
+		loadFromFile(gameMode);
 	}
 
 	public void setScores(String name, int time, GameMode gameMode) {
-		boolean changed = false;
-		for (int i = 0; i < this.times.size(); i++) {
-			if (time < this.times.get(i).intValue()) {
-				this.times.add(i, new Integer(time));
-				this.names.add(i, name);
-				while(this.times.size() > TOP_TEN) {
-					this.times.remove(TOP_TEN);
+		if(Checkers_GUI.debug) {
+			System.out.println("TESTING FOR SCOREBOARD\nName: " + name + " Time: " + time);
+		}
+		boolean changed;
+		if (gameMode == GameMode.FREE_MODE) {
+			changed = makeScores(name, time, this.freeNames, this.freeTimes);
+		} else if (gameMode == GameMode.GAME_TIMED_MODE) {
+			changed = makeScores(name, time, this.normalNames, this.normalTimes);
+		} else {
+			changed = makeScores(name, time, this.turnNames, this.turnTimes);
+		}
+
+		if (changed) {
+			saveToFile(gameMode);
+		}
+	}
+
+	private boolean makeScores(String name, int time, ArrayList<String> names, ArrayList<Integer> times) {	
+		if(times.size() == 0 && names.size() == 0) {
+			times.add(new Integer(time));
+			names.add(name);
+		}
+		if(Checkers_GUI.debug) {
+			System.out.println("Looking into the scoreboard of size: " + times.size());
+		}
+		for (int i = 0; i < times.size(); i++) {
+			if (time < times.get(i).intValue()) {
+				if(Checkers_GUI.debug) {
+					System.out.println("Name: " + name + " Time: " + time + " Position: " + i);
 				}
-				while(this.names.size() > TOP_TEN) {
-					this.names.remove(TOP_TEN);
+				times.add(i, new Integer(time));
+				names.add(i, name);
+				while (times.size() > TOP_TEN) {
+					times.remove(TOP_TEN);
 				}
-				changed = true;
-				break;
+				while (names.size() > TOP_TEN) {
+					names.remove(TOP_TEN);
+				}
+				return true;
 			}
 		}
-		if (changed) {
-			// the absolute value and the % 3 prevents the program from misbehaving and
-			// crash if a wrong value is passed.
-			saveToFile(createPath(gameMode));
-		}
+		return false;
 	}
 
 	private Path createPath(GameMode gameMode) {
 		Path p;
 		if (gameMode == GameMode.FREE_MODE) {
-			p = Paths.get("../GameData/FreeMode");
+			p = Paths.get("GameData", "FreeMode");
 		} else if (gameMode == GameMode.GAME_TIMED_MODE) {
-			p = Paths.get("../GameData/GameTimedMode");
+			p = Paths.get("GameData", "GameTimedMode");
 		} else {
-			p = Paths.get("../GameData/TurnTimedMode");
+			p = Paths.get("GameData", "TurnTimedMode");
 		}
 		return p;
 	}
 
-	//SOURCE: code taken from: https://docs.oracle.com/javase/tutorial/essential/io/file.html#common
-	private void saveToFile(Path path) {
+	// SOURCE: code taken from:
+	// https://docs.oracle.com/javase/tutorial/essential/io/file.html#common
+	private void saveToFile(GameMode gameMode) {
 		Charset charset = Charset.forName("US-ASCII");
-		String s = makeDataString();
-		try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
-		    writer.write(s, 0, s.length());
+		String s = makeDataString(gameMode);
+		try {
+			if (!createPath(gameMode).toFile().exists()) {
+				createPath(gameMode).toFile().createNewFile();
+			}
+			BufferedWriter writer = Files.newBufferedWriter(createPath(gameMode), charset);
+			writer.write(s, 0, s.length());
 		} catch (IOException x) {
-		    System.err.format("IOException: %s%n", x);
+			System.err.format("IOException: %s%n", x);
 		}
 	}
 
-	//SOURCE: code partially taken from: https://docs.oracle.com/javase/tutorial/essential/io/file.html#common
-	private void loadFromFile(Path path) {
+	// SOURCE: code partially taken from:
+	// https://docs.oracle.com/javase/tutorial/essential/io/file.html#common
+	private void loadFromFile(GameMode gameMode) {
 		Charset charset = Charset.forName("US-ASCII");
 		String[] tempBuffer;
 		ArrayList<String> tempNames = new ArrayList<String>();
 		ArrayList<Integer> tempTimes = new ArrayList<Integer>();
-		try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
-		    String line = null;
-		    while ((line = reader.readLine()) != null) {
-		        line = line.trim();
-		        tempBuffer = line.split(" ", 2);
-		        tempNames.add(tempBuffer[0]);
-		        tempTimes.add(new Integer(Integer.parseInt(tempBuffer[1])));
-		    }
-		    this.names = tempNames;
-		    this.times = tempTimes;
+		try (BufferedReader reader = Files.newBufferedReader(createPath(gameMode), charset)) {
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				if(Checkers_GUI.debug) {
+					System.out.println(line);
+				}
+				line = line.trim();
+				tempBuffer = line.split(" ", 2);
+				if(Checkers_GUI.debug) {
+					System.out.println("Name on File: " + tempBuffer[0] + "\nTime on File: " + tempBuffer[1]);
+				}
+				tempNames.add(tempBuffer[0]);
+				tempTimes.add(new Integer(Integer.parseInt(tempBuffer[1])));
+			}
+			if (gameMode == GameMode.FREE_MODE) {
+				this.freeNames = tempNames;
+				this.freeTimes = tempTimes;
+			} else if (gameMode == GameMode.GAME_TIMED_MODE) {
+				this.normalNames = tempNames;
+				this.normalTimes = tempTimes;
+			} else {
+				this.turnNames = tempNames;
+				this.turnTimes = tempTimes;
+			}
 		} catch (IOException x) {
-		    System.err.format("IOException: %s%n", x);
+			System.err.format("IOException: %s%n", x);
 		}
 	}
 
-	private String makeDataString() {
+	private String makeDataString(GameMode gameMode) {
 		String result = "";
+		ArrayList<String> names;
+		ArrayList<Integer> times;
+		if (gameMode == GameMode.FREE_MODE) {
+			names = this.freeNames;
+			times = this.freeTimes;
+		} else if (gameMode == GameMode.GAME_TIMED_MODE) {
+			names = this.normalNames;
+			times = this.normalTimes;
+		} else {
+			names = this.turnNames;
+			times = this.turnTimes;
+		}
 		int minutes;
 		int seconds;
-		for(int i = 0; i < this.names.size(); i++) {
-			result += this.names.get(i);
+		for (int i = 0; i < names.size(); i++) {
+			result += names.get(i);
 			result += "\t\t";
-			minutes = this.times.get(i).intValue() / 60;
-			if(minutes < 10) {
+			minutes = times.get(i).intValue() / 60;
+			if (minutes < 10) {
 				result += ("0" + minutes);
-			}
-			else {
+			} else {
 				result += minutes;
 			}
 			result += ":";
-			seconds =  this.times.get(i).intValue() % 60;
-			if(seconds < 10) {
+			seconds = times.get(i).intValue() % 60;
+			if (seconds < 10) {
 				result += ("0" + seconds);
-			}
-			else {
+			} else {
 				result += seconds;
 			}
 			result += "/n";
 		}
+		if(Checkers_GUI.debug) {
+			System.out.println(result);
+		}
 		return result;
 	}
-	
+
 	private int[] convertToIntArray(ArrayList<Integer> list) {
 		int[] result = new int[list.size()];
 		for (int i = 0; i < list.size(); i++) {
+			if(Checkers_GUI.debug) {
+				System.out.println("Converted value: " + list.get(i));
+			}
 			result[i] = list.get(i).intValue();
 		}
 		return result;
@@ -135,9 +231,18 @@ public class ScoreBoardData {
 
 	private String[] convertToStringArray(ArrayList<String> list) {
 		String[] result = new String[list.size()];
-		for (int i = 0; i < list.size(); i++) {
+		for (int i = 0; i < list.size(); i++) {	
 			result[i] = list.get(i);
+			if(Checkers_GUI.debug) {
+				System.out.println("Converted value: " + result[i]);
+			}
 		}
 		return result;
+	}
+	
+	private void debugPrintArray(String[] arr) {
+		for(String s: arr) {
+			System.out.println(s);
+		}
 	}
 }

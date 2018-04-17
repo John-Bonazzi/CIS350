@@ -30,16 +30,19 @@ public class CheckersPanel extends JPanel implements Observer{
 	private boolean[][] options;
 	private Checkers_GUI parentFrame;
 	private Timer gameTimer;
+	private ScoreBoardData data;
 
 	private Graphics g;
 	
 	private boolean againstAI;
+
 
 	public CheckersPanel(int xSize, int ySize, Checkers_GUI gui) {
 		size = new Dimension(xSize, ySize);
 		this.setPreferredSize(size);
 		this.againstAI = true;
 		this.parentFrame = gui;
+		this.data = new ScoreBoardData();
 		// this.setBackground(Color.RED);
 		this.game = new Game(this, gui, this.againstAI);
 		this.board = new Board(this.game);
@@ -62,6 +65,14 @@ public class CheckersPanel extends JPanel implements Observer{
 	
 	public String getWinner() {
 			return this.game.getCurrentPlayer().getName();
+	}
+	
+	public ScoreBoardData getData() {
+		return this.data;
+	}
+	
+	public void setPlayersNames(String player1, String player2) {
+		this.game.setNames(player1, player2);
 	}
 	
 	private void initBoard() {
@@ -192,6 +203,7 @@ public class CheckersPanel extends JPanel implements Observer{
 	
 	@Override
 	public void update(Observable o, Object arg) {
+		data.setScores(this.game.getCurrentPlayer().getName(), this.game.getTime(), this.game.getMode());
 		resetGame();		
 	}
 
