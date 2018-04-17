@@ -34,6 +34,11 @@ public class CheckersPanel extends JPanel implements Observer{
 	private Graphics g;
 	
 	private boolean againstAI;
+	
+	private boolean first = true;
+	
+	
+	
 
 
 	public CheckersPanel(int xSize, int ySize, Checkers_GUI gui) {
@@ -53,6 +58,7 @@ public class CheckersPanel extends JPanel implements Observer{
 	}
 
 	public void newGameAI(String player, GameMode gameMode) {
+		this.first = true;
 		this.againstAI = true;
 		this.game.setGameMode(gameMode);
 		this.game.startGameAI(player);
@@ -202,6 +208,7 @@ public class CheckersPanel extends JPanel implements Observer{
 	}
 
 	public void newGame(String player1, String player2, GameMode gameMode) {
+		this.first = true;
 		game.setGameMode(gameMode);
 		game.startGame(player1, player2);
 		this.againstAI = false;
@@ -258,10 +265,12 @@ public class CheckersPanel extends JPanel implements Observer{
 	
 	private class MListener implements MouseListener {
 
-		private boolean first = true;
-		boolean didJump = false;
+		
+		private boolean didJump = false;
+		
 		private int originalRow;
 		private int originalCol;
+		
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
@@ -292,46 +301,46 @@ public class CheckersPanel extends JPanel implements Observer{
 					}
 					//The position selected is a true (valid) position and it's the first action in the turn.
 					if (options[row][col] && first) {
-						this.originalRow = row;
-						this.originalCol = col;
+						originalRow = row;
+						originalCol = col;
 						options = board.showOptions(game.getCurrentPlayer(), row, col);
-						this.first = false;
+						first = false;
 					} 
 					//The position selected is a true (valid) position and a checker has been selected.
 					else if (!first && options[row][col]) {
 						
 						//If the selected move is the original checker.
-						if (col == this.originalCol && row == this.originalRow) {
-							this.first = true;
+						if (col == originalCol && row == originalRow) {
+							first = true;
 							options = canMove;
 						} 
 						else {
 
 							// Prevent a player from doing more than 2 jumps in one turn.
 							if (didJump) {
-								board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row, col);
+								board.move(game.getCurrentPlayer(), originalRow, originalCol, row, col);
 								didJump = false;
 							} else {
-								didJump = board.move(game.getCurrentPlayer(), this.originalRow, this.originalCol, row,
+								didJump = board.move(game.getCurrentPlayer(), originalRow, originalCol, row,
 										col);
 								if(didJump) {
-									this.originalRow = row;
-									this.originalCol = col;
+									originalRow = row;
+									originalCol = col;
 								}
 							}
 
 							// If there was a jump, and the same checker can jump again, show the moves for
 							// that checker only
 							if (didJump && board.canJump(game.getCurrentPlayer().playerColor(),
-									game.getCurrentPlayer().kingColor(), this.originalRow, this.originalCol)) {
+									game.getCurrentPlayer().kingColor(), originalRow, originalCol)) {
 								options = board.showDoubleJumpOptions(game.getCurrentPlayer(), row, col);
-								this.originalCol = col;
-								this.originalRow = row;
+								originalCol = col;
+								originalRow = row;
 							} else {
 								game.nextPlayer();
 								canMove = board.canSelect(game.getCurrentPlayer());
 								options = canMove;
-								this.first = true;
+								first = true;
 								this.didJump = false;
 								if(againstAI) {
 									//Assuming that the human player is always the white one.

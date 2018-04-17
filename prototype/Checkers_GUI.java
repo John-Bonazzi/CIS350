@@ -200,6 +200,7 @@ public class Checkers_GUI extends JFrame implements Observer {
 	public void update(Observable o, Object arg) {
 		concedeButton.setVisible(false);
 		newGameButton.setVisible(true);
+		this.newGameVsAIButton.setVisible(true);
 		messageLabel.setText("The winner is: " + this.checkersPanel.getWinner());
 	}
 
