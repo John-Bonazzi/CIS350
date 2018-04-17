@@ -60,7 +60,7 @@ public class Board extends Observable {
 		// King.
 		if (fr == 0 && player.playerColor() == temp && player.playerColor() == ColorStatus.WHITE) {
 			temp = ColorStatus.WHITE_KING;
-		} else if (fr == SIZE && player.playerColor() == temp && player.playerColor() == ColorStatus.BLACK) {
+		} else if (fr == SIZE - 1 && player.playerColor() == temp && player.playerColor() == ColorStatus.BLACK) {
 			temp = ColorStatus.BLACK_KING;
 		}
 
@@ -199,6 +199,42 @@ public class Board extends Observable {
 		return result;
 	}
 
+	public boolean[][] showDoubleJumpOptions(Player player, int row, int col){
+		ColorStatus allyChecker = player.playerColor();
+		ColorStatus allyKing = player.kingColor();
+		ColorStatus checker = this.board[row][col];
+		boolean[][] result = setAllFalse();
+		if (checker == ColorStatus.WHITE || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (canJump(allyChecker, allyKing, row, col, row - 2, col + 2)) {
+				result[row - 2][col + 2] = true;
+				if (Checkers_GUI.debug) {
+					System.out.println("Can Jump at coordinates: " + (row - 2) + " Row " + (col + 2) + " Column");
+				}
+			}
+			if (canJump(allyChecker, allyKing, row, col, row - 2, col - 2)) {
+				result[row - 2][col - 2] = true;
+				if (Checkers_GUI.debug) {
+					System.out.println("Can Jump at coordinates: " + (row - 2) + " Row " + (col - 2) + " Column");
+				}
+			}
+		}
+		if (checker == ColorStatus.BLACK || checker == ColorStatus.BLACK_KING || checker == ColorStatus.WHITE_KING) {
+			if (canJump(allyChecker, allyKing, row, col, row + 2, col + 2)) {
+				result[row + 2][col + 2] = true;
+				if (Checkers_GUI.debug) {
+					System.out.println("Can Jump at coordinates: " + (row + 2) + " Row " + (col + 2) + " Column");
+				}
+			}
+			if (canJump(allyChecker, allyKing, row, col, row + 2, col - 2)) {
+				result[row + 2][col - 2] = true;
+				if (Checkers_GUI.debug) {
+					System.out.println("Can Jump at coordinates: " + (row + 2) + " Row " + (col - 2) + " Column");
+				}
+			}
+		}
+		return result;
+	}
+	
 	public boolean[][] showOptions(Player player, int row, int col) {
 		ColorStatus allyChecker = player.playerColor();
 		ColorStatus allyKing = player.kingColor();

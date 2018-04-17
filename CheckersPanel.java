@@ -23,6 +23,7 @@ public class CheckersPanel extends JPanel implements Observer{
 	private Board board;
 	private Game game;
 	private ColorStatus[][] checkerColor;
+	private Player winner;
 	private int boardX, boardY;
 	private int boardWidth, boardHeight;
 	private int tileSize;
@@ -58,6 +59,10 @@ public class CheckersPanel extends JPanel implements Observer{
 		this.options = board.canSelect(game.getCurrentPlayer());
 		this.gameTimer = new Timer(TIMER_DELAY, new TimerListener());
 		this.gameTimer.start();
+	}
+	
+	public String getWinner() {
+			return this.game.getCurrentPlayer().getName();
 	}
 	
 	private void initBoard() {
@@ -149,8 +154,8 @@ public class CheckersPanel extends JPanel implements Observer{
 			for (int col = 0; col < Board.SIZE; col++) {
 				y = row * tileSize + yI + (tileSize - w) / 2;
 				x = col * tileSize + xI + (tileSize - h) / 2;
-				sy = row * tileSize + xI + (tileSize / 2) - (fontSize / 3);
-				sx = col * tileSize + yI + (tileSize / 2) + (fontSize / 3);
+				sy = row * tileSize + yI + (tileSize / 2) + (fontSize / 3);
+				sx = col * tileSize + xI + (tileSize / 2) - (fontSize / 3);
 				switch (checkerColor[row][col]) {
 				case WHITE_KING:
 					g.setColor(Color.WHITE);
@@ -188,7 +193,8 @@ public class CheckersPanel extends JPanel implements Observer{
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		resetGame();	
+		this.winner = game.getCurrentPlayer();
+		resetGame();		
 	}
 
 	public void newGame(String player1, String player2) {
@@ -200,6 +206,7 @@ public class CheckersPanel extends JPanel implements Observer{
 	}
 	
 	public void endGame() {
+		game.nextPlayer();
 		game.stopGame();	
 		this.board.setAllFalse();
 		this.gameTimer.stop();
@@ -307,8 +314,8 @@ public class CheckersPanel extends JPanel implements Observer{
 							// that checker only
 							if (didJump && board.canJump(game.getCurrentPlayer().playerColor(),
 									game.getCurrentPlayer().kingColor(), row, col)) {
-								canMove = board.canSelect(game.getCurrentPlayer());
-								options = board.showOptions(game.getCurrentPlayer(), row, col);
+								//canMove = board.canSelect(game.getCurrentPlayer());
+								options = board.showDoubleJumpOptions(game.getCurrentPlayer(), row, col);
 								this.originalCol = col;
 								this.originalRow = row;
 							} else {

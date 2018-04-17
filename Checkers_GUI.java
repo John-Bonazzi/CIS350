@@ -159,7 +159,7 @@ public class Checkers_GUI extends JFrame implements Observer {
 	public void update(Observable o, Object arg) {
 		concedeButton.setVisible(false);
 		newGameButton.setVisible(true);
-		
+		messageLabel.setText("The winner is: " + this.checkersPanel.getWinner());
 	}
 
 
@@ -172,6 +172,7 @@ public class Checkers_GUI extends JFrame implements Observer {
 				checkersPanel.newGame(player1Name.getText(), player2Name.getText());
 				concedeButton.setVisible(true);
 				newGameButton.setVisible(false);
+				messageLabel.setText("Welcome to Checkers!");
 			}
 			else if (src == concedeButton) {
 				checkersPanel.endGame();
