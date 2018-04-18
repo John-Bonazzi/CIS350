@@ -3,12 +3,33 @@ package prototype;
 import java.util.ArrayList;
 import java.util.Random;
 
+/***************************************************************
+* The AI class is used when a player wants to play against the
+* computer
+* @author Gionata Bonazzi
+* @author Cole Sellers
+* @author Brendan Cronan
+* @author Rosa Fleming
+* @version stable build 17 April 2018
+***************************************************************/
 public class CheckersAI extends Player {
-	
+
+	/***************************************************************
+	* Constructor of the AI class, calls the super class.
+	* @param color
+	* 					a color is passed to the constructor
+	***************************************************************/
 	public CheckersAI(ColorStatus color) {
 		super("AI", color);
 	}
 
+	/***************************************************************
+	* Makes the move for the AI
+	* @param board
+	*					The current status of the board
+	* @param options
+	* 				A boolean array of the move options
+	***************************************************************/
 	public void makeMove(Board board, boolean[][] options) {
 		int initialRow, initialCol;
 		int[] pair = randomMove(options);
@@ -36,13 +57,26 @@ public class CheckersAI extends Player {
 			}
 		}
 	}
-	
+
+	/***************************************************************
+	* This clss is the logic behind choosing the random move, it
+	* will create a randondom number and choose a move from the
+	* options.
+	* @param options
+	* 					A boolean array of the move options
+	***************************************************************/
 	private int[] randomMove(boolean[][] options) {
 		Random rand = new Random();
 		ArrayList<int[]> temp = checkOptions(options);
 		return temp.get(rand.nextInt(temp.size()));
 	}
-	
+
+	/***************************************************************
+	* Creates an Arraylist of moves based on the boolean array options.
+	* @param options
+	*						A boolean array of the move options
+	* @return An arraylist of all the possible moves.
+	***************************************************************/
 	private ArrayList<int[]> checkOptions(boolean[][] options) {
 		ArrayList<int[]> result = new ArrayList<int[]>();
 		for(int row = 0; row < options.length; row++) {
