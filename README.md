@@ -33,7 +33,7 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 | Project Design | 2/12 - 2/19 | We should look at the interfaces and see if we can merge similar methods to prevent repeating code | - |
 | Implementation | 2/19 - 3/5 | Write the Java classes for your code. Your code should compile without errors by 3/5. This will be the code of our first release | - |
 | Comments | 3/5 - 3/9 | Finish writing Javadoc comments for all your classes. Make sure they follow the GVSU [Java Coding Style](http://www.cis.gvsu.edu/java-coding-style-guide/)| - |
-| Testing | 3/9 - TBD | Test the code using JUnit classes| - |
+| Testing | 3/9 - 3/16 | Test the code using JUnit classes| - |
 | Expand | TBD - TBD | Implement new ideas and QoL changes to the program. Example: make it fancier, faster, more options, difficulty level etc... | - |
 | Web App | TBD - TBD | Embed the Java code in a website | - |
 
@@ -41,13 +41,13 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 
 | Task | Est. | Actual |
 |------|------|------|
-| Interface | 7 | - |
-| Project Design | 7 | - |
-| Implementation | 7 | - |
-| Comments | 5 | - |
-| Testing | - | - |
-| Expand | - | - |
-| Web App | - | - |
+| Interface | 7 | 6 |
+| Project Design | 7 | 7 |
+| Implementation | 7 | 10 |
+| Comments | 5 | 3 |
+| Testing | 7 | 3 |
+| Expand | NA| NA |
+| Web App | NA | NA |
 ### Communication
 
 To easily share code, ideas and links, we will make use of a [slack channel](
