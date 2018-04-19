@@ -48,6 +48,21 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 | Testing | 7 | 3 |
 | Expand | NA| NA |
 | Web App | NA | NA |
+
+EVA final deliverable:
+
+| Element | Value | Formula |
+|---------|-------|---------|
+| BAC  | 102 | BAC |
+| BCWS | 91 | BCWS |
+| BCWP | 91 | BCWP |
+| ACWP | 93 | ACWP |
+| SPI  | 1.0 | BWP / BCWS |
+| SV   | 0.0 person days | BCWP - BCWS |
+| PSFC | 89%  | BCWS / BAC |
+| PC   | 89% | BCWP / BAC |
+| CPI  | 0.97   | BCWP / ACWP |
+| CV   | -2 person days      | BCWP - ACWP |
 ### Communication
 
 To easily share code, ideas and links, we will make use of a [slack channel](
