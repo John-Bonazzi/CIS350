@@ -30,12 +30,12 @@ As an optional challenge, the code will be converted to a Java applet and embedd
 | | Week(s) | Description | Completed On |
 |-----|---------|-------------|--------- |
 | Interface | 2/5 - 2/12 | Declare the methods you think you'll need on a Java Interface file and provide Javadoc comments | 2/12 (Juan's and Rosa's part missing)|
-| Project Design | 2/12 - 2/19 | We should look at the interfaces and see if we can merge similar methods to prevent repeating code | - |
-| Implementation | 2/19 - 3/5 | Write the Java classes for your code. Your code should compile without errors by 3/5. This will be the code of our first release | - |
-| Comments | 3/5 - 3/9 | Finish writing Javadoc comments for all your classes. Make sure they follow the GVSU [Java Coding Style](http://www.cis.gvsu.edu/java-coding-style-guide/)| - |
-| Testing | 3/9 - 3/16 | Test the code using JUnit classes| - |
-| Expand | TBD - TBD | Implement new ideas and QoL changes to the program. Example: make it fancier, faster, more options, difficulty level etc... | - |
-| Web App | TBD - TBD | Embed the Java code in a website | - |
+| Project Design | 2/12 - 2/19 | We should look at the interfaces and see if we can merge similar methods to prevent repeating code | 2/19 |
+| Implementation | 2/19 - 3/5 | Write the Java classes for your code. Your code should compile without errors by 3/5. This will be the code of our first release | 3/3 |
+| GUI | 2/19 - 3/5 | Create the GUI for the Checkers game. This will have a concurrent timeline as the Implementation| 3/7 |
+| Comments | 3/5 - 3/9 | Finish writing Javadoc comments for all your classes. Make sure they follow the GVSU [Java Coding Style](http://www.cis.gvsu.edu/java-coding-style-guide/)| 3/9 |
+| Testing | 3/9 - 3/16 | Test the code using JUnit classes| 3/19 |
+
 
 ### Project EVA
 
