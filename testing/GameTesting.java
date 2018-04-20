@@ -1,6 +1,8 @@
 package testing;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +13,7 @@ import prototype.GameMode;
 import prototype.Player;
 import prototype.CheckersAI;
 
-/**
+/***************************************************************
  * Test Unit for a Game object.
  * The Game object instantiated in this JUnit is made
  * with a different constructor than the one used in the software.
@@ -36,7 +38,7 @@ import prototype.CheckersAI;
  * @author Rosa Fleming
  * @version 19 April 2018
  *
- */
+ ***************************************************************/
 class GameTesting {
 
 	/** A Game object Player vs Player. **/
@@ -112,7 +114,7 @@ class GameTesting {
 		
 		//Assumption: The second element is a CheckersAI object.
 		CheckersAI gameAI = 
-				(CheckersAI) this.testSubjectVSAI.getPlayers().get(1);
+			(CheckersAI) this.testSubjectVSAI.getPlayers().get(1);
 		assertEquals(testAI.playerColor(), gameAI.playerColor());
 	}
 	
@@ -127,8 +129,10 @@ class GameTesting {
 		String testName1 = "Test1";
 		String testName2 = "Test2";
 		this.testSubjectVSPlayer.setNames(testName1, testName2);
-		Player firstPlayer = this.testSubjectVSPlayer.getPlayers().get(0);
-		Player secondPlayer = this.testSubjectVSPlayer.getPlayers().get(1);
+		Player firstPlayer = 
+			this.testSubjectVSPlayer.getPlayers().get(0);
+		Player secondPlayer = 
+			this.testSubjectVSPlayer.getPlayers().get(1);
 		assertEquals(firstPlayer.getName(), testName1);
 		assertEquals(secondPlayer.getName(), testName2);
 	}
@@ -146,7 +150,7 @@ class GameTesting {
 		this.testSubjectVSAI.setNames(testName1, testName2);
 		Player firstPlayer = this.testSubjectVSAI.getPlayers().get(0);
 		CheckersAI secondPlayerAI = 
-				(CheckersAI) this.testSubjectVSAI.getPlayers().get(1);
+			(CheckersAI) this.testSubjectVSAI.getPlayers().get(1);
 		assertEquals(firstPlayer.getName(), testName1);
 		assertEquals(secondPlayerAI.getName(), testName2);
 	}
@@ -256,8 +260,10 @@ class GameTesting {
 		//Make sure that the name of the player is similar.
 		//We are interested mostly in testing the ColorStatus.
 		gamePlayer.setName(testName);
-		assertEquals(testPlayer.getName(), gamePlayer.getName());
-		assertEquals(testPlayer.playerColor(), gamePlayer.playerColor());
+		assertEquals(testPlayer.getName(), 
+				gamePlayer.getName());
+		assertEquals(testPlayer.playerColor(), 
+				gamePlayer.playerColor());
 	}
 	
 	/****************************************************************
@@ -275,8 +281,10 @@ class GameTesting {
 		//Make sure that the name of the player is similar.
 		//We are interested mostly in testing the ColorStatus.
 		gamePlayer.setName(testName);
-		assertEquals(testPlayer.getName(), gamePlayer.getName());
-		assertEquals(testPlayer.playerColor(), gamePlayer.playerColor());
+		assertEquals(testPlayer.getName(), 
+				gamePlayer.getName());
+		assertEquals(testPlayer.playerColor(), 
+				gamePlayer.playerColor());
 	}
 	
 	/****************************************************************
@@ -297,7 +305,8 @@ class GameTesting {
 		Player gamePlayer = this.testSubjectVSPlayer.getCurrentPlayer();
 		gamePlayer.setName(testName);
 		assertEquals(testPlayer.getName(), gamePlayer.getName());
-		assertEquals(testPlayer.playerColor(), gamePlayer.playerColor());
+		assertEquals(testPlayer.playerColor(), 
+				gamePlayer.playerColor());
 	}
 	
 	/****************************************************************
@@ -315,7 +324,8 @@ class GameTesting {
 		String testName = "Test";
 		CheckersAI testAI = new CheckersAI(ColorStatus.BLACK);
 		this.testSubjectVSAI.nextPlayer();
-		CheckersAI gameAI = (CheckersAI) this.testSubjectVSAI.getCurrentPlayer();
+		CheckersAI gameAI = 
+			(CheckersAI) this.testSubjectVSAI.getCurrentPlayer();
 		gameAI.setName(testName);
 		testAI.setName(testName);
 		assertEquals(testAI.getName(), gameAI.getName());
